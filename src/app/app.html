@@ -1,0 +1,19 @@
+<header class="app-header">
+  <div class="logo" routerLink="/">
+    TürkishEco
+  </div>
+
+  <nav class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Yazılar
+    </a>
+    <a routerLink="/posts/new" routerLinkActive="active">
+      Yeni Yazı
+    </a>
+    <!-- İleride buraya: Forum, Giriş, Kayıt vs. gelecek -->
+  </nav>
+</header>
+
+<main class="app-main">
+  <router-outlet></router-outlet>
+</main>

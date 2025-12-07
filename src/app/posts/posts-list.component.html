@@ -1,0 +1,36 @@
+<h1>Son Yazılar</h1>
+
+<button routerLink="/posts/new" class="btn-primary">
+  Yeni Yazı Yaz
+</button>
+
+<div *ngIf="isLoading">Yükleniyor...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<div *ngIf="posts && posts.length > 0; else emptyState">
+  <article class="post-card" *ngFor="let post of posts">
+    <h2>
+      <a [routerLink]="['/posts', post.slug]">
+        {{ post.title }}
+      </a>
+    </h2>
+    <p class="meta">
+      {{ post.authorName }} •
+      {{ post.createdAt | date: 'medium' }}
+    </p>
+    <p class="excerpt">
+      {{ post.contentMarkdown | slice: 0:160 }}...
+    </p>
+
+    <div class="actions">
+      <a [routerLink]="['/posts', post.slug]">Detay</a>
+      <button (click)="onDelete(post.id)" class="btn-danger">
+        Sil
+      </button>
+    </div>
+  </article>
+</div>
+
+<ng-template #emptyState>
+  <p>Henüz hiç yazı yok. İlk yazıyı <a routerLink="/posts/new">buradan</a> oluştur.</p>
+</ng-template>
