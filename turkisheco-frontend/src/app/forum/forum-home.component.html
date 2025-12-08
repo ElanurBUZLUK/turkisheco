@@ -1,0 +1,137 @@
+<div class="forum">
+  <section class="forum__header">
+    <p class="forum__eyebrow">Forum</p>
+    <h1 class="forum__title">Topluluk Sohbetleri</h1>
+    <p class="forum__subtitle">
+      Misafir olarak kullanıcı adınla profil oluştur, yeni sohbet başlıkları aç
+      ve diğerleriyle fikirlerini paylaş.
+    </p>
+  </section>
+
+  <div *ngIf="error" class="forum__status forum__status--error">
+    {{ error }}
+  </div>
+
+  <div class="forum__layout">
+    <!-- Sol: başlık listesi -->
+    <section class="forum__column forum__threads">
+      <div class="card">
+        <div class="card__header">
+          <h2>Son sohbet başlıkları</h2>
+          <span *ngIf="isLoadingThreads" class="badge">Yükleniyor…</span>
+        </div>
+
+        <div
+          *ngIf="!isLoadingThreads && threads.length === 0"
+          class="card__empty"
+        >
+          Henüz açılmış başlık yok. İlk başlığı sen oluştur!
+        </div>
+
+        <ul class="thread-list" *ngIf="threads.length > 0">
+          <li class="thread-list__item" *ngFor="let thread of threads">
+            <h3 class="thread-list__title">
+              {{ thread.title }}
+            </h3>
+            <p class="thread-list__meta">
+              {{ thread.forumUser?.userName || 'Misafir' }} ·
+              {{ thread.createdAt | date: 'd MMM y, HH:mm':'':'tr-TR' }}
+            </p>
+            <p class="thread-list__preview">
+              {{ thread.content | slice: 0:120
+              }}{{ thread.content.length > 120 ? '…' : '' }}
+            </p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Sağ: profil + yeni başlık -->
+    <section class="forum__column forum__actions">
+      <!-- Profil kartı -->
+      <div class="card">
+        <h2 class="card__title">Profilini oluştur</h2>
+        <p class="card__subtitle">
+          Forumda kullanmak istediğin bir kullanıcı adı seç.
+        </p>
+
+        <form [formGroup]="userForm" (ngSubmit)="createUser()" class="form">
+          <label class="form__field">
+            <span>Kullanıcı adı</span>
+            <input
+              type="text"
+              formControlName="userName"
+              placeholder="ör. eco_gezgin"
+            />
+            <small
+              class="form__error"
+              *ngIf="
+                userForm.get('userName')?.touched &&
+                userForm.get('userName')?.invalid
+              "
+            >
+              Kullanıcı adı 3–20 karakter olmalıdır.
+            </small>
+          </label>
+
+          <label class="form__field">
+            <span>Kısa bio (isteğe bağlı)</span>
+            <textarea
+              rows="2"
+              formControlName="bio"
+              placeholder="Kısaca kendini tanıtabilirsin."
+            ></textarea>
+          </label>
+
+          <button class="btn" type="submit" [disabled]="isCreatingUser">
+            <span *ngIf="!currentUser && !isCreatingUser">Profil oluştur</span>
+            <span *ngIf="currentUser && !isCreatingUser">Profilini güncelle</span>
+            <span *ngIf="isCreatingUser">Kaydediliyor…</span>
+          </button>
+
+          <p *ngIf="currentUser" class="form__hint">
+            Şu anda <strong>{{ currentUser.userName }}</strong> olarak giriş
+            yapmış durumdasın.
+          </p>
+        </form>
+      </div>
+
+      <!-- Yeni başlık kartı -->
+      <div class="card">
+        <h2 class="card__title">Yeni sohbet başlığı</h2>
+        <p class="card__subtitle">
+          Bir konu başlığı ve kısa bir açıklama yazarak yeni bir sohbet başlat.
+        </p>
+
+        <form [formGroup]="threadForm" (ngSubmit)="createThread()" class="form">
+          <label class="form__field">
+            <span>Başlık</span>
+            <input
+              type="text"
+              formControlName="title"
+              placeholder="Örneğin: 2025 ekonomi beklentileri"
+            />
+          </label>
+
+          <label class="form__field">
+            <span>İlk mesaj</span>
+            <textarea
+              rows="4"
+              formControlName="content"
+              placeholder="Sohbeti başlatacak ilk mesajını yaz."
+            ></textarea>
+          </label>
+
+          <button class="btn" type="submit" [disabled]="isCreatingThread">
+            <span *ngIf="!isCreatingThread">Başlık oluştur</span>
+            <span *ngIf="isCreatingThread">Gönderiliyor…</span>
+          </button>
+
+          <p class="form__hint" *ngIf="!currentUser">
+            Başlık açmadan önce yukarıdan bir kullanıcı adı seçmen gerekiyor.
+          </p>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>

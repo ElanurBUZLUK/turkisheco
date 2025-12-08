@@ -1,0 +1,45 @@
+<section class="admin-posts">
+  <header class="admin-posts__header">
+    <h1>Blog Yazıları (Admin Panel)</h1>
+
+    <a routerLink="/posts/new" class="btn btn-primary">
+      + Yeni Yazı
+    </a>
+  </header>
+
+  <div *ngIf="isLoading">Yükleniyor...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <table *ngIf="!isLoading && posts.length">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Başlık</th>
+        <th>Yazar</th>
+        <th>Tarih</th>
+        <th>İşlemler</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let post of posts">
+        <td>{{ post.id }}</td>
+        <td>
+          <a [routerLink]="['/posts', post.slug]">
+            {{ post.title }}
+          </a>
+        </td>
+        <td>{{ post.authorName || 'Anonim' }}</td>
+        <td>{{ post.createdAt | date:'short':'':'tr-TR' }}</td>
+        <td>
+          <button type="button" (click)="onDelete(post)">
+            Sil
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!isLoading && !posts.length">
+    Henüz blog yazısı yok.
+  </p>
+</section>

@@ -1,0 +1,89 @@
+.navbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid #eee;
+  background: #fafafa;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+}
+
+.navbar a.active {
+  text-decoration: underline;
+}
+
+.main-container {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.post-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  background: #fff;
+}
+
+.post-card h2 {
+  margin: 0 0 8px;
+}
+
+.post-card .meta {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 8px;
+}
+
+.post-card .excerpt {
+  color: #444;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th,
+td {
+  border: 1px solid #eee;
+  padding: 8px;
+  text-align: left;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-danger {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: none;
+  background: #d32f2f;
+  color: #fff;
+  cursor: pointer;
+}
+
+.error {
+  color: #c62828;
+}

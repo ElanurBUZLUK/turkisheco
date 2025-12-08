@@ -1,0 +1,58 @@
+<div class="post-create">
+  <h1>Yeni Yazı Oluştur</h1>
+
+  <form (ngSubmit)="save()" #f="ngForm">
+    <div class="form-group">
+      <label for="title">Başlık</label>
+      <input
+        id="title"
+        name="title"
+        type="text"
+        [(ngModel)]="model.title"
+        (blur)="generateSlug()"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="slug">Slug (URL)</label>
+      <input
+        id="slug"
+        name="slug"
+        type="text"
+        [(ngModel)]="model.slug"
+        required
+      />
+      <small>Başlıktan otomatik oluşur, istersen değiştirebilirsin.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="authorName">Yazar Adı</label>
+      <input
+        id="authorName"
+        name="authorName"
+        type="text"
+        [(ngModel)]="model.authorName"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="content">İçerik (Markdown)</label>
+      <textarea
+        id="content"
+        name="contentMarkdown"
+        rows="10"
+        [(ngModel)]="model.contentMarkdown"
+        required
+      ></textarea>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="isSaving || f.invalid">
+        {{ isSaving ? 'Kaydediliyor...' : 'Kaydet' }}
+      </button>
+    </div>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+  </form>
+</div>

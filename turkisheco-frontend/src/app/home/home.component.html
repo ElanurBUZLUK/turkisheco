@@ -1,0 +1,107 @@
+<div class="home">
+  <!-- Üst başlık alanı -->
+  <section class="home__header">
+    <p class="home__eyebrow">Editörün Seçimi</p>
+    <h1 class="home__title">Türk İş Eco Blog</h1>
+    <p class="home__subtitle">
+      Türk iş dünyası ve ekonomi üzerine öne çıkan blog yazılarımız.
+    </p>
+  </section>
+
+  <!-- Yükleniyor / Hata / Boş durumları -->
+  <div *ngIf="isLoading" class="home__status">Yükleniyor...</div>
+
+  <div *ngIf="error" class="home__status home__status--error">
+    {{ error }}
+  </div>
+
+  <div
+    *ngIf="!isLoading && !error && posts.length === 0"
+    class="home__status"
+  >
+    Henüz blog yazısı yok.
+  </div>
+
+  <!-- Asıl "Editor's Choice" alanı -->
+  <section
+    *ngIf="!isLoading && !error && posts.length > 0"
+    class="home__editor"
+  >
+    <div class="editor-shell">
+      <div class="editor-shell__label-row">
+        <h2 class="editor-shell__label">Editor’s Choice</h2>
+        <span class="editor-shell__chip">Blog</span>
+      </div>
+
+      <div class="editor-shell__grid">
+        <!-- Soldaki dikey kart -->
+        <article
+          *ngIf="sidePost"
+          class="editor-card editor-card--side"
+          [routerLink]="['/posts', sidePost.slug]"
+        >
+          <div class="editor-card__eyebrow">Öne Çıkan Yazı</div>
+          <h3 class="editor-card__title">
+            {{ sidePost.title }}
+          </h3>
+          <p class="editor-card__meta">
+            {{ sidePost.authorName }} •
+            {{ sidePost.createdAt | date: 'd MMM y':'':'tr-TR' }}
+          </p>
+          <p class="editor-card__excerpt">
+            {{ sidePost.contentMarkdown | slice: 0:130
+            }}{{ sidePost.contentMarkdown.length > 130 ? '…' : '' }}
+          </p>
+          <span class="editor-card__link">Devamını oku →</span>
+        </article>
+
+        <!-- Sağ taraftaki büyük hero kart -->
+        <article
+          *ngIf="heroPost"
+          class="editor-card editor-card--hero"
+          [routerLink]="['/posts', heroPost.slug]"
+        >
+          <div class="editor-card__hero-media"></div>
+
+          <div class="editor-card__hero-content">
+            <span class="editor-card__pill">En yeni</span>
+
+            <h3 class="editor-card__title editor-card__title--hero">
+              {{ heroPost.title }}
+            </h3>
+
+            <p class="editor-card__meta">
+              {{ heroPost.authorName }} •
+              {{ heroPost.createdAt | date: 'd MMM y':'':'tr-TR' }}
+            </p>
+
+            <p class="editor-card__excerpt editor-card__excerpt--muted">
+              {{ heroPost.contentMarkdown | slice: 0:180
+              }}{{ heroPost.contentMarkdown.length > 180 ? '…' : '' }}
+            </p>
+          </div>
+        </article>
+
+        <!-- Alttaki küçük kartlar -->
+        <div
+          class="editor-shell__grid-small"
+          *ngIf="gridPosts.length > 0"
+        >
+          <article
+            class="editor-card editor-card--small"
+            *ngFor="let post of gridPosts; trackBy: trackByPostId"
+            [routerLink]="['/posts', post.slug]"
+          >
+            <div class="editor-card__eyebrow">Blog yazısı</div>
+            <h3 class="editor-card__title">
+              {{ post.title }}
+            </h3>
+            <p class="editor-card__meta">
+              {{ post.createdAt | date: 'd MMM y':'':'tr-TR' }}
+            </p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

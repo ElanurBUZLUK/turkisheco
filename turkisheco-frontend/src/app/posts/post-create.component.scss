@@ -1,0 +1,41 @@
+.post-create {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  input,
+  textarea {
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+
+  small {
+    color: #666;
+    margin-top: 0.25rem;
+  }
+}
+
+.actions {
+  margin-top: 1rem;
+
+  button {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+}
+
+.error {
+  color: #c0392b;
+  margin-top: 1rem;
+}
