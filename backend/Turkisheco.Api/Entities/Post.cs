@@ -1,24 +1,31 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Turkisheco.Api.Entities
 {
-    // Şimdilik hem blog yazısı hem forum konusu için kullanılacak
     public class Post
     {
         public int Id { get; set; }
 
-        // URL için kullanılacak (örn: /posts/why-turkish-dramas-are-addictive)
+        [Required]
+        [MaxLength(200)]
         public string Slug { get; set; } = string.Empty;
 
+        [Required]
+        [MaxLength(200)]
         public string Title { get; set; } = string.Empty;
 
-        // Markdown veya düz metin
+        [Required]
         public string ContentMarkdown { get; set; } = string.Empty;
 
-        // İleride User tablosuna bağlarız, şimdilik sadece string:
-        public string AuthorName { get; set; } = "system";
+        [Required]
+        public string AuthorName { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        // Bu post’a ait yorumlar
+        public List<Comment> Comments { get; set; } = new();
     }
 }

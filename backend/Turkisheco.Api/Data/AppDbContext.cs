@@ -10,6 +10,7 @@ namespace Turkisheco.Api.Data
         }
 
         public DbSet<Post> Posts => Set<Post>();
+        public DbSet<Comment> Comments => Set<Comment>();
         public DbSet<ForumUser> ForumUsers => Set<ForumUser>();
         public DbSet<ForumThread> ForumThreads => Set<ForumThread>();
 
@@ -29,6 +30,26 @@ namespace Turkisheco.Api.Data
 
                 entity.HasIndex(p => p.Slug)
                       .IsUnique();
+            });
+
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.HasKey(c => c.Id);
+
+                entity.Property(c => c.Content)
+                      .HasMaxLength(2000)
+                      .IsRequired();
+
+                entity.Property(c => c.DisplayName)
+                      .HasMaxLength(100);
+
+                entity.Property(c => c.Email)
+                      .HasMaxLength(256);
+
+                entity.HasOne(c => c.Post)
+                      .WithMany(p => p.Comments)
+                      .HasForeignKey(c => c.PostId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<ForumUser>(entity =>

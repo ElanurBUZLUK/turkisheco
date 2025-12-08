@@ -1,5 +1,4 @@
 using System;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,6 +36,19 @@ namespace Turkisheco.Api.Controllers
             var post = await _context.Posts.FindAsync(id);
             if (post == null) return NotFound();
             return Ok(post);
+        }
+
+        // GET: api/Posts/5/related
+        [HttpGet("{id:int}/related")]
+        public async Task<ActionResult<IEnumerable<Post>>> GetRelatedPosts(int id)
+        {
+            var relatedPosts = await _context.Posts
+                .Where(p => p.Id != id)
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(5)
+                .ToListAsync();
+
+            return relatedPosts;
         }
 
         [HttpGet("slug/{slug}")]
