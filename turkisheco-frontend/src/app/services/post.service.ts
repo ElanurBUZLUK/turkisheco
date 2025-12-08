@@ -37,7 +37,7 @@ export class PostService {
 
   addComment(
     postId: number,
-    payload: { displayName?: string; email?: string; content: string }
+    payload: { guestName?: string; guestEmail?: string; content: string }
   ): Observable<Comment> {
     return this.http.post<Comment>(`${this.apiUrl}/${postId}/comments`, payload);
   }

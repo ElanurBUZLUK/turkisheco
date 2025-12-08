@@ -24,15 +24,15 @@ namespace Turkisheco.Api.Controllers
         public record CommentDto(
             int Id,
             int PostId,
-            string? DisplayName,
-            string? Email,
+            string? GuestName,
+            string? GuestEmail,
             string Content,
             DateTime CreatedAt
         );
 
         public record CreateCommentRequest(
-            string? DisplayName,
-            string? Email,
+            string? GuestName,
+            string? GuestEmail,
             string Content
         );
 
@@ -49,8 +49,8 @@ namespace Turkisheco.Api.Controllers
                 .Select(c => new CommentDto(
                     c.Id,
                     c.PostId,
-                    c.DisplayName,
-                    c.Email,
+                    c.GuestName,
+                    c.GuestEmail,
                     c.Content,
                     c.CreatedAt
                 ))
@@ -71,15 +71,19 @@ namespace Turkisheco.Api.Controllers
             if (string.IsNullOrWhiteSpace(request.Content))
                 return BadRequest("Yorum metni boş olamaz.");
 
-            string? userId = null;
+            int? forumUserId = null;
             if (User.Identity?.IsAuthenticated == true)
             {
-                userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (int.TryParse(idClaim, out var parsed))
+                {
+                    forumUserId = parsed;
+                }
             }
 
-            if (userId == null &&
-                string.IsNullOrWhiteSpace(request.DisplayName) &&
-                string.IsNullOrWhiteSpace(request.Email))
+            if (forumUserId == null &&
+                string.IsNullOrWhiteSpace(request.GuestName) &&
+                string.IsNullOrWhiteSpace(request.GuestEmail))
             {
                 return BadRequest("İsim veya e-posta (ya da giriş yapmış kullanıcı) gerekli.");
             }
@@ -87,9 +91,9 @@ namespace Turkisheco.Api.Controllers
             var comment = new Comment
             {
                 PostId = postId,
-                UserId = userId,
-                DisplayName = request.DisplayName,
-                Email = request.Email,
+                ForumUserId = forumUserId,
+                GuestName = request.GuestName,
+                GuestEmail = request.GuestEmail,
                 Content = request.Content.Trim(),
                 CreatedAt = DateTime.UtcNow
             };
@@ -100,8 +104,8 @@ namespace Turkisheco.Api.Controllers
             var dto = new CommentDto(
                 comment.Id,
                 comment.PostId,
-                comment.DisplayName,
-                comment.Email,
+                comment.GuestName,
+                comment.GuestEmail,
                 comment.Content,
                 comment.CreatedAt
             );

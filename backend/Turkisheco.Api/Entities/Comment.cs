@@ -9,16 +9,13 @@ namespace Turkisheco.Api.Entities
 
         [Required]
         public int PostId { get; set; }
-        public Post? Post { get; set; }
+        public Post Post { get; set; } = null!;
 
-        public string? UserId { get; set; }
+        public int? ForumUserId { get; set; }
+        public ForumUser? ForumUser { get; set; }
 
-        [MaxLength(100)]
-        public string? DisplayName { get; set; }
-
-        [MaxLength(256)]
-        [EmailAddress]
-        public string? Email { get; set; }
+        public string? GuestName { get; set; }
+        public string? GuestEmail { get; set; }
 
         [Required]
         [MaxLength(2000)]

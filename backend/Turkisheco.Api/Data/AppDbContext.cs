@@ -13,6 +13,7 @@ namespace Turkisheco.Api.Data
         public DbSet<Comment> Comments => Set<Comment>();
         public DbSet<ForumUser> ForumUsers => Set<ForumUser>();
         public DbSet<ForumThread> ForumThreads => Set<ForumThread>();
+        public DbSet<ForumTopic> ForumTopics => Set<ForumTopic>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,16 +41,21 @@ namespace Turkisheco.Api.Data
                       .HasMaxLength(2000)
                       .IsRequired();
 
-                entity.Property(c => c.DisplayName)
+                entity.Property(c => c.GuestName)
                       .HasMaxLength(100);
 
-                entity.Property(c => c.Email)
+                entity.Property(c => c.GuestEmail)
                       .HasMaxLength(256);
 
                 entity.HasOne(c => c.Post)
                       .WithMany(p => p.Comments)
                       .HasForeignKey(c => c.PostId)
                       .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(c => c.ForumUser)
+                      .WithMany(u => u.Comments)
+                      .HasForeignKey(c => c.ForumUserId)
+                      .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<ForumUser>(entity =>
@@ -58,7 +64,14 @@ namespace Turkisheco.Api.Data
                       .HasMaxLength(32)
                       .IsRequired();
 
+                entity.Property(u => u.Email)
+                      .HasMaxLength(256)
+                      .IsRequired();
+
                 entity.HasIndex(u => u.UserName)
+                      .IsUnique();
+
+                entity.HasIndex(u => u.Email)
                       .IsUnique();
             });
 
@@ -78,6 +91,27 @@ namespace Turkisheco.Api.Data
                 entity.HasOne(t => t.ForumUser)
                       .WithMany(u => u.Threads)
                       .HasForeignKey(t => t.ForumUserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ForumTopic>(entity =>
+            {
+                entity.HasKey(t => t.Id);
+
+                entity.HasIndex(t => t.Slug)
+                      .IsUnique();
+
+                entity.Property(t => t.Title)
+                      .HasMaxLength(200)
+                      .IsRequired();
+
+                entity.Property(t => t.Slug)
+                      .HasMaxLength(200)
+                      .IsRequired();
+
+                entity.HasOne(t => t.Author)
+                      .WithMany(u => u.Topics)
+                      .HasForeignKey(t => t.AuthorId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
         }

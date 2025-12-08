@@ -41,7 +41,7 @@ import { PostService } from '../services/post.service';
             <ul *ngIf="comments.length > 0" class="comment-list">
               <li *ngFor="let c of comments" class="comment-item">
                 <div class="comment-header">
-                  <strong>{{ c.displayName || 'Anonim' }}</strong>
+                  <strong>{{ c.guestName || 'Anonim' }}</strong>
                   <span class="comment-date">
                     · {{ c.createdAt | date: 'short' }}
                   </span>
@@ -49,8 +49,8 @@ import { PostService } from '../services/post.service';
                 <div class="comment-body">
                   {{ c.content }}
                 </div>
-                <div class="comment-email" *ngIf="c.email">
-                  {{ c.email }}
+                <div class="comment-email" *ngIf="c.guestEmail">
+                  {{ c.guestEmail }}
                 </div>
               </li>
             </ul>
@@ -64,8 +64,8 @@ import { PostService } from '../services/post.service';
                   İsim (isteğe bağlı)
                   <input
                     type="text"
-                    [(ngModel)]="newComment.displayName"
-                    name="displayName"
+                    [(ngModel)]="newComment.guestName"
+                    name="guestName"
                   />
                 </label>
 
@@ -73,8 +73,8 @@ import { PostService } from '../services/post.service';
                   E-posta (isteğe bağlı)
                   <input
                     type="email"
-                    [(ngModel)]="newComment.email"
-                    name="email"
+                    [(ngModel)]="newComment.guestEmail"
+                    name="guestEmail"
                   />
                 </label>
               </div>
@@ -287,8 +287,8 @@ export class PostDetailComponent implements OnInit {
   commentError: string | null = null;
 
   newComment = {
-    displayName: '',
-    email: '',
+    guestName: '',
+    guestEmail: '',
     content: ''
   };
 
@@ -369,8 +369,8 @@ export class PostDetailComponent implements OnInit {
     this.isSavingComment = true;
 
     this.postService.addComment(this.postId, {
-      displayName: this.newComment.displayName || undefined,
-      email: this.newComment.email || undefined,
+      guestName: this.newComment.guestName || undefined,
+      guestEmail: this.newComment.guestEmail || undefined,
       content
     }).subscribe({
       next: created => {
