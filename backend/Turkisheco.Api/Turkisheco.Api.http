@@ -1,0 +1,6 @@
+@Turkisheco.Api_HostAddress = http://localhost:0
+
+GET {{Turkisheco.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
