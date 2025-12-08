@@ -11,7 +11,7 @@ using Turkisheco.Api.Entities;
 namespace Turkisheco.Api.Controllers
 {
     [ApiController]
-    [Route("api/posts/{postId:int}/comments")]
+    [Route("api/[controller]")]
     public class CommentsController : ControllerBase
     {
         private readonly AppDbContext _db;
@@ -24,45 +24,44 @@ namespace Turkisheco.Api.Controllers
         public record CommentDto(
             int Id,
             int PostId,
-            string? GuestName,
-            string? GuestEmail,
+            string AuthorDisplayName,
             string Content,
             DateTime CreatedAt
         );
 
         public record CreateCommentRequest(
-            string? GuestName,
-            string? GuestEmail,
-            string Content
+            string Content,
+            string? AuthorName,
+            string? AuthorEmail
         );
 
-        [HttpGet]
+        [HttpGet("post/{postId:int}")]
+        [HttpGet("/api/posts/{postId:int}/comments")]
         public async Task<ActionResult<IEnumerable<CommentDto>>> GetForPost(int postId)
         {
-            var exists = await _db.Posts.AnyAsync(p => p.Id == postId);
-            if (!exists)
-                return NotFound("Post bulunamadı.");
-
             var comments = await _db.Comments
+                .Include(c => c.ForumUser)
                 .Where(c => c.PostId == postId)
                 .OrderByDescending(c => c.CreatedAt)
-                .Select(c => new CommentDto(
-                    c.Id,
-                    c.PostId,
-                    c.GuestName,
-                    c.GuestEmail,
-                    c.Content,
-                    c.CreatedAt
-                ))
                 .ToListAsync();
 
-            return Ok(comments);
+            var result = comments.Select(c =>
+                new CommentDto(
+                    c.Id,
+                    c.PostId,
+                    c.ForumUser != null
+                        ? c.ForumUser.DisplayName
+                        : (c.AuthorName ?? "Misafir"),
+                    c.Content,
+                    c.CreatedAt
+                ));
+
+            return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<CommentDto>> Create(
-            int postId,
-            [FromBody] CreateCommentRequest request)
+        [HttpPost("post/{postId:int}")]
+        [HttpPost("/api/posts/{postId:int}/comments")]
+        public async Task<ActionResult<CommentDto>> CreateForPost(int postId, CreateCommentRequest request)
         {
             var post = await _db.Posts.FindAsync(postId);
             if (post == null)
@@ -71,50 +70,53 @@ namespace Turkisheco.Api.Controllers
             if (string.IsNullOrWhiteSpace(request.Content))
                 return BadRequest("Yorum metni boş olamaz.");
 
-            int? forumUserId = null;
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (int.TryParse(idClaim, out var parsed))
-                {
-                    forumUserId = parsed;
-                }
-            }
-
-            if (forumUserId == null &&
-                string.IsNullOrWhiteSpace(request.GuestName) &&
-                string.IsNullOrWhiteSpace(request.GuestEmail))
-            {
-                return BadRequest("İsim veya e-posta (ya da giriş yapmış kullanıcı) gerekli.");
-            }
-
             var comment = new Comment
             {
                 PostId = postId,
-                ForumUserId = forumUserId,
-                GuestName = request.GuestName,
-                GuestEmail = request.GuestEmail,
                 Content = request.Content.Trim(),
                 CreatedAt = DateTime.UtcNow
             };
 
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (int.TryParse(userIdStr, out var forumUserId))
+                {
+                    comment.ForumUserId = forumUserId;
+                }
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(request.AuthorName) || string.IsNullOrWhiteSpace(request.AuthorEmail))
+                    return BadRequest("Misafir yorumlar için isim ve e-posta zorunludur.");
+
+                comment.AuthorName = request.AuthorName.Trim();
+                comment.AuthorEmail = request.AuthorEmail.Trim();
+            }
+
             _db.Comments.Add(comment);
             await _db.SaveChangesAsync();
+
+            string authorDisplayName;
+            if (comment.ForumUserId.HasValue)
+            {
+                var user = await _db.ForumUsers.FindAsync(comment.ForumUserId.Value);
+                authorDisplayName = user?.DisplayName ?? "Kullanıcı";
+            }
+            else
+            {
+                authorDisplayName = comment.AuthorName ?? "Misafir";
+            }
 
             var dto = new CommentDto(
                 comment.Id,
                 comment.PostId,
-                comment.GuestName,
-                comment.GuestEmail,
+                authorDisplayName,
                 comment.Content,
                 comment.CreatedAt
             );
 
-            return CreatedAtAction(
-                nameof(GetForPost),
-                new { postId },
-                dto
-            );
+            return CreatedAtAction(nameof(GetForPost), new { postId }, dto);
         }
     }
 }

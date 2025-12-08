@@ -41,10 +41,10 @@ namespace Turkisheco.Api.Data
                       .HasMaxLength(2000)
                       .IsRequired();
 
-                entity.Property(c => c.GuestName)
+                entity.Property(c => c.AuthorName)
                       .HasMaxLength(100);
 
-                entity.Property(c => c.GuestEmail)
+                entity.Property(c => c.AuthorEmail)
                       .HasMaxLength(256);
 
                 entity.HasOne(c => c.Post)

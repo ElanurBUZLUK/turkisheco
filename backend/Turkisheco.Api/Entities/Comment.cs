@@ -14,8 +14,8 @@ namespace Turkisheco.Api.Entities
         public int? ForumUserId { get; set; }
         public ForumUser? ForumUser { get; set; }
 
-        public string? GuestName { get; set; }
-        public string? GuestEmail { get; set; }
+        public string? AuthorName { get; set; }
+        public string? AuthorEmail { get; set; }
 
         [Required]
         [MaxLength(2000)]

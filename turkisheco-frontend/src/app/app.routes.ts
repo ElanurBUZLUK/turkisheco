@@ -42,6 +42,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'account/profile',
+    loadComponent: () =>
+      import('./account/account-profile.component').then(
+        (m) => m.AccountProfileComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

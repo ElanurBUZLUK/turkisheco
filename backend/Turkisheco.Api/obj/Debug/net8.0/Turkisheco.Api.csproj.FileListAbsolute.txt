@@ -104,3 +104,12 @@
 /home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/obj/Debug/net8.0/Turkisheco.Api.genruntimeconfig.cache
 /home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/obj/Debug/net8.0/ref/Turkisheco.Api.dll
 /home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/obj/Debug/net8.0/Turkisheco.Api.sourcelink.json
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/BCrypt.Net-Next.dll
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Abstractions.dll
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Logging.dll
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.dll
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
+/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
