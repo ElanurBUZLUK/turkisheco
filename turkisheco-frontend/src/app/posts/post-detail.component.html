@@ -1,0 +1,99 @@
+<div class="page" *ngIf="post; else loadingPost">
+  <div class="content-column">
+    <article class="post-article">
+      <a routerLink="/" class="back-link">← Anasayfa</a>
+
+      <p class="post-meta">
+        {{ post.authorName }} ·
+        {{ post.createdAt | date: 'dd MMM yyyy' }}
+      </p>
+      <h1 class="post-title">{{ post.title }}</h1>
+
+      <div class="post-body" [innerHTML]="post.contentHtml || post.contentMarkdown"></div>
+    </article>
+
+    <!-- Yorumlar -->
+    <section class="comments-section">
+      <h2>Yorumlar</h2>
+
+      <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="comment-form">
+        <div class="form-row">
+          <div class="form-field">
+            <label>İsim</label>
+            <input type="text" formControlName="authorName" />
+            <small *ngIf="commentForm.get('authorName')?.invalid && commentForm.get('authorName')?.touched">
+              İsim gerekli.
+            </small>
+          </div>
+          <div class="form-field">
+            <label>E-posta (isteğe bağlı)</label>
+            <input type="email" formControlName="authorEmail" />
+            <small *ngIf="commentForm.get('authorEmail')?.invalid && commentForm.get('authorEmail')?.touched">
+              Geçerli bir e-posta girin.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>Yorumunuz</label>
+          <textarea rows="4" formControlName="content"></textarea>
+          <small *ngIf="commentForm.get('content')?.invalid && commentForm.get('content')?.touched">
+            Yorum boş olamaz.
+          </small>
+        </div>
+
+        <button type="submit" [disabled]="isSubmitting || commentForm.invalid">
+          {{ isSubmitting ? 'Gönderiliyor...' : 'Yorum Gönder' }}
+        </button>
+      </form>
+
+      <div class="comments-list">
+        <ng-container *ngIf="!isLoadingComments; else loadingComments">
+          <p *ngIf="comments.length === 0" class="empty-text">
+            Henüz yorum yok. İlk yorumu sen yaz.
+          </p>
+
+          <div *ngFor="let c of comments" class="comment-card">
+            <div class="comment-header">
+              <strong>{{ c.authorName }}</strong>
+              <span>{{ c.createdAt | date: 'dd MMM yyyy HH:mm' }}</span>
+            </div>
+            <p class="comment-content">
+              {{ c.content }}
+            </p>
+          </div>
+        </ng-container>
+      </div>
+    </section>
+  </div>
+
+  <!-- Sağ sütun: önerilen yazılar -->
+  <aside class="sidebar">
+    <h3>Diğer Yazılar</h3>
+    <div *ngIf="recommended.length === 0">
+      <p>Şimdilik gösterilecek başka yazı yok.</p>
+    </div>
+
+    <a
+      *ngFor="let p of recommended"
+      class="recommended-card"
+      [routerLink]="['/posts', p.slug]"
+    >
+      <div class="rec-title">{{ p.title }}</div>
+      <div class="rec-meta">
+        {{ p.authorName }} · {{ p.createdAt | date: 'dd MMM yyyy' }}
+      </div>
+    </a>
+  </aside>
+</div>
+
+<ng-template #loadingPost>
+  <p *ngIf="loadError; else loadingCopy" class="error-state">{{ loadError }}</p>
+  <ng-template #loadingCopy>
+    <p>Yazı yükleniyor...</p>
+  </ng-template>
+</ng-template>
+
+<ng-template #loadingComments>
+  <p class="muted">Yorumlar yükleniyor...</p>
+</ng-template>

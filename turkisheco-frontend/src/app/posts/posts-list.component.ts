@@ -1,15 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { PostService } from '../services/post.service';
 import { Post } from '../models/post';
 
 @Component({
   selector: 'app-posts-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './posts-list.component.html',
-  styleUrl: './posts-list.component.scss',
+  styleUrls: ['./posts-list.component.scss'],
 })
 export class PostsListComponent {
   private postService = inject(PostService);
@@ -17,6 +16,24 @@ export class PostsListComponent {
   posts: Post[] = [];
   isLoading = false;
   error: string | null = null;
+  searchQuery = '';
+
+  get filteredPosts(): Post[] {
+    if (!this.posts) {
+      return [];
+    }
+
+    const q = this.searchQuery?.toLowerCase().trim();
+    if (!q) {
+      return this.posts;
+    }
+
+    return this.posts.filter((p) =>
+      (p.title || '').toLowerCase().includes(q) ||
+      (p.contentMarkdown || '').toLowerCase().includes(q) ||
+      (p.authorName || '').toLowerCase().includes(q)
+    );
+  }
 
   ngOnInit() {
     this.load();
@@ -39,19 +56,26 @@ export class PostsListComponent {
     });
   }
 
-  onDelete(post: Post) {
-    if (!confirm(`"${post.title}" yazısını silmek istediğine emin misin?`)) {
+  onDelete(postId: number) {
+    const post = this.posts.find((p) => p.id === postId);
+    const title = post?.title || `ID: ${postId}`;
+
+    if (!confirm(`"${title}" yazısını silmek istediğine emin misin?`)) {
       return;
     }
 
-    this.postService.delete(post.id).subscribe({
+    this.postService.delete(postId).subscribe({
       next: () => {
-        this.posts = this.posts.filter((p) => p.id !== post.id);
+        this.posts = this.posts.filter((p) => p.id !== postId);
       },
       error: (err) => {
         console.error(err);
         alert('Silme sırasında bir hata oluştu.');
       },
     });
+  }
+
+  onSearch() {
+    // Şimdilik filtreleme filteredPosts getter'ı ile yapılıyor.
   }
 }

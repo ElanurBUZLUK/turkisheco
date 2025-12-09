@@ -19,7 +19,7 @@ import { ForumService } from '../services/forum.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './forum-home.component.html',
-  styleUrl: './forum-home.component.scss',
+  styleUrls: ['./forum-home.component.scss'],
 })
 export class ForumHomeComponent implements OnInit {
   private fb = inject(FormBuilder);

@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Turkisheco.Api.Data;
+using Turkisheco.Api.Dto;
 using Turkisheco.Api.Entities;
+using System.Security.Claims;
 
 namespace Turkisheco.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/posts/{postId:int}/comments")]
     public class CommentsController : ControllerBase
     {
         private readonly AppDbContext _db;
@@ -21,59 +22,45 @@ namespace Turkisheco.Api.Controllers
             _db = db;
         }
 
-        public record CommentDto(
-            int Id,
-            int PostId,
-            string AuthorDisplayName,
-            string Content,
-            DateTime CreatedAt
-        );
-
-        public record CreateCommentRequest(
-            string Content,
-            string? AuthorName,
-            string? AuthorEmail
-        );
-
-        [HttpGet("post/{postId:int}")]
-        [HttpGet("/api/posts/{postId:int}/comments")]
+        [HttpGet]
+        [HttpGet("/api/comments/post/{postId:int}")]
         public async Task<ActionResult<IEnumerable<CommentDto>>> GetForPost(int postId)
         {
             var comments = await _db.Comments
                 .Include(c => c.ForumUser)
                 .Where(c => c.PostId == postId)
                 .OrderByDescending(c => c.CreatedAt)
+                .Select(c => new CommentDto
+                {
+                    Id = c.Id,
+                    PostId = c.PostId,
+                    AuthorName = c.ForumUser != null
+                        ? (c.ForumUser.DisplayName ?? c.ForumUser.UserName)
+                        : (c.AuthorName ?? "Misafir"),
+                    AuthorEmail = c.AuthorEmail,
+                    Content = c.Content,
+                    CreatedAt = c.CreatedAt
+                })
                 .ToListAsync();
 
-            var result = comments.Select(c =>
-                new CommentDto(
-                    c.Id,
-                    c.PostId,
-                    c.ForumUser != null
-                        ? c.ForumUser.DisplayName
-                        : (c.AuthorName ?? "Misafir"),
-                    c.Content,
-                    c.CreatedAt
-                ));
-
-            return Ok(result);
+            return Ok(comments);
         }
 
-        [HttpPost("post/{postId:int}")]
-        [HttpPost("/api/posts/{postId:int}/comments")]
-        public async Task<ActionResult<CommentDto>> CreateForPost(int postId, CreateCommentRequest request)
+        [HttpPost]
+        [HttpPost("/api/comments/post/{postId:int}")]
+        public async Task<ActionResult<CommentDto>> Create(int postId, [FromBody] CreateCommentDto dto)
         {
-            var post = await _db.Posts.FindAsync(postId);
-            if (post == null)
+            var postExists = await _db.Posts.AnyAsync(p => p.Id == postId);
+            if (!postExists)
                 return NotFound("Post bulunamadı.");
 
-            if (string.IsNullOrWhiteSpace(request.Content))
+            if (string.IsNullOrWhiteSpace(dto.Content))
                 return BadRequest("Yorum metni boş olamaz.");
 
             var comment = new Comment
             {
                 PostId = postId,
-                Content = request.Content.Trim(),
+                Content = dto.Content.Trim(),
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -87,11 +74,12 @@ namespace Turkisheco.Api.Controllers
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(request.AuthorName) || string.IsNullOrWhiteSpace(request.AuthorEmail))
-                    return BadRequest("Misafir yorumlar için isim ve e-posta zorunludur.");
+                var authorName = dto.AuthorName?.Trim();
+                if (string.IsNullOrWhiteSpace(authorName))
+                    return BadRequest("Misafir yorumlar için isim zorunludur.");
 
-                comment.AuthorName = request.AuthorName.Trim();
-                comment.AuthorEmail = request.AuthorEmail.Trim();
+                comment.AuthorName = authorName;
+                comment.AuthorEmail = dto.AuthorEmail?.Trim();
             }
 
             _db.Comments.Add(comment);
@@ -108,15 +96,17 @@ namespace Turkisheco.Api.Controllers
                 authorDisplayName = comment.AuthorName ?? "Misafir";
             }
 
-            var dto = new CommentDto(
-                comment.Id,
-                comment.PostId,
-                authorDisplayName,
-                comment.Content,
-                comment.CreatedAt
-            );
+            var result = new CommentDto
+            {
+                Id = comment.Id,
+                PostId = comment.PostId,
+                AuthorName = authorDisplayName,
+                AuthorEmail = comment.AuthorEmail,
+                Content = comment.Content,
+                CreatedAt = comment.CreatedAt
+            };
 
-            return CreatedAtAction(nameof(GetForPost), new { postId }, dto);
+            return CreatedAtAction(nameof(GetForPost), new { postId }, result);
         }
     }
 }

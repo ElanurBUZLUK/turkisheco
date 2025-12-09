@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Post } from '../models/post';
-import { Comment } from '../models/comment';
+import { Comment, CreateCommentRequest } from '../models/comment';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +37,7 @@ export class PostService {
 
   addComment(
     postId: number,
-    payload: { guestName?: string; guestEmail?: string; content: string }
+    payload: CreateCommentRequest
   ): Observable<Comment> {
     return this.http.post<Comment>(`${this.apiUrl}/${postId}/comments`, payload);
   }

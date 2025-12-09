@@ -1,45 +1,94 @@
-<section class="admin-posts">
-  <header class="admin-posts__header">
-    <h1>Blog Yazıları (Admin Panel)</h1>
+<header>
+  <div class="logo">NowByte</div>
+  <nav>
+    <a href="#articles">ARTICLES</a>
+    <a href="#radio">RADIO</a>
+    <a href="#podcast">PODCAST</a>
+    <a href="#talk">TALK TO US</a>
+  </nav>
+  <div class="search-container">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <input type="text" placeholder="Type topics...">
+  </div>
+</header>
 
-    <a routerLink="/posts/new" class="btn btn-primary">
-      + Yeni Yazı
-    </a>
-  </header>
+<main>
+  <div class="featured-grid">
+    <div class="card card-large">
+      <div class="author">
+        <div class="avatar"></div>
+        <span>By Bruce Wayne</span>
+      </div>
+      <h2>Understanding the Hype Around Sustainable Fashion</h2>
+      <p>Dive into this growing trend of eco-friendly fashion and why it matters for the planet.</p>
+      <a href="#" class="read-btn">
+        Read Article →
+      </a>
+    </div>
 
-  <div *ngIf="isLoading">Yükleniyor...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+    <div class="card card-small">
+      <h2>Self-Care Routines for Busy Millennials</h2>
+      <p>Practical tips to integrate self-care into a hectic schedule and improve overall well-being.</p>
+    </div>
 
-  <table *ngIf="!isLoading && posts.length">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Başlık</th>
-        <th>Yazar</th>
-        <th>Tarih</th>
-        <th>İşlemler</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let post of posts">
-        <td>{{ post.id }}</td>
-        <td>
-          <a [routerLink]="['/posts', post.slug]">
-            {{ post.title }}
-          </a>
-        </td>
-        <td>{{ post.authorName || 'Anonim' }}</td>
-        <td>{{ post.createdAt | date:'short':'':'tr-TR' }}</td>
-        <td>
-          <button type="button" (click)="onDelete(post)">
-            Sil
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <div class="card card-small">
+      <h2>Self-Care Routines for Busy Millennials</h2>
+      <p>Prioritize the little things, set up a flexible schedule and improve overall well-being.</p>
+    </div>
+  </div>
 
-  <p *ngIf="!isLoading && !posts.length">
-    Henüz blog yazısı yok.
-  </p>
-</section>
+  <div class="section-header">
+    <h3>Recent Blog Posts</h3>
+    <button class="view-all-btn">View All Post</button>
+  </div>
+
+  <div class="blog-grid">
+    <div class="blog-card">
+      <div class="blog-image" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 400 300&quot;><rect fill=&quot;%23b8a8a0&quot; width=&quot;400&quot; height=&quot;300&quot;/></svg>'); background-size: cover; background-position: center;">
+        <div class="blog-author">
+          <div class="avatar"></div>
+          <span>By Bruce Wayne</span>
+        </div>
+      </div>
+      <div class="blog-content">
+        <div class="blog-date">February 28, 2021</div>
+        <h4>Profitable Online Business Trends in the Post-Pandemic Era</h4>
+        <p>Stay ahead in the market by leveraging data-driven insights for emerging online business opportunities.</p>
+        <a href="#" class="blog-read-btn">Read Article →</a>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <div class="blog-image" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 400 300&quot;><rect fill=&quot;%23c8e8a8&quot; width=&quot;400&quot; height=&quot;300&quot;/></svg>'); background-size: cover; background-position: center;">
+        <div class="blog-author">
+          <div class="avatar"></div>
+          <span>By Bruce Wayne</span>
+        </div>
+      </div>
+      <div class="blog-content">
+        <div class="blog-date">March 5, 2021</div>
+        <h4>Wardrobe Essentials Every Fashionista Must Own</h4>
+        <p>Discover timeless clothing pieces that form the foundation of every stylish wardrobe.</p>
+        <a href="#" class="blog-read-btn">Read Article →</a>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <div class="blog-image" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 400 300&quot;><rect fill=&quot;%2388c8c8&quot; width=&quot;400&quot; height=&quot;300&quot;/></svg>'); background-size: cover; background-position: center;">
+        <div class="blog-author">
+          <div class="avatar"></div>
+          <span>By Bruce Wayne</span>
+        </div>
+      </div>
+      <div class="blog-content">
+        <div class="blog-date">October 28, 2021</div>
+        <h4>Fashion on a Budget: How to Look Chic Without Breaking the Bank</h4>
+        <p>Master the art of looking fashionable while keeping your finances in check.</p>
+        <a href="#" class="blog-read-btn">Read Article →</a>
+      </div>
+    </div>
+  </div>
+</main>
