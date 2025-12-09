@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../services/auth.service';
 
 interface UserProfile {
   id: number;
@@ -27,6 +28,7 @@ interface UserProfile {
 export class AccountProfileComponent {
   private http = inject(HttpClient);
   private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
 
   form: FormGroup = this.fb.group({
     displayName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -40,6 +42,12 @@ export class AccountProfileComponent {
   profile: UserProfile | null = null;
 
   ngOnInit() {
+    if (!this.auth.isLoggedIn()) {
+      this.isLoading = false;
+      this.error = 'Profil bilgilerini görmek için lütfen giriş yapın.';
+      return;
+    }
+
     this.loadProfile();
   }
 
@@ -60,7 +68,7 @@ export class AccountProfileComponent {
           this.isLoading = false;
         },
         error: () => {
-          this.error = 'Profil bilgileri yüklenirken bir hata oluştu.';
+          this.error = 'Profil bilgileri yüklenirken bir hata oluştu. Oturumunuzun açık olduğundan emin olun.';
           this.isLoading = false;
         },
       });

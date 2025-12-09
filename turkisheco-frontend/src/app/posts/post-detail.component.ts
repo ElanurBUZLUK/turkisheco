@@ -6,6 +6,7 @@ import { PostService } from '../services/post.service';
 import { CommentService } from '../services/comment.service';
 import { Post } from '../models/post';
 import { Comment } from '../models/comment';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-post-detail',
@@ -19,6 +20,7 @@ export class PostDetailComponent {
   private postService = inject(PostService);
   private commentService = inject(CommentService);
   private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
 
   post?: Post;
   comments: Comment[] = [];
@@ -28,6 +30,7 @@ export class PostDetailComponent {
   isLoadingComments = true;
   isSubmitting = false;
   loadError: string | null = null;
+  isLoggedIn = false;
 
   commentForm: FormGroup = this.fb.group({
     authorName: ['', [Validators.required, Validators.maxLength(80)]],
@@ -36,6 +39,13 @@ export class PostDetailComponent {
   });
 
   ngOnInit(): void {
+    this.isLoggedIn = this.auth.isLoggedIn();
+    this.auth.currentUser$.subscribe((user) => {
+      this.isLoggedIn = !!user;
+      this.toggleNameValidator(this.isLoggedIn);
+    });
+    this.toggleNameValidator(this.isLoggedIn);
+
     const slug = this.route.snapshot.paramMap.get('slug');
     if (!slug) {
       this.loadError = 'Geçersiz yazı adresi.';
@@ -119,5 +129,17 @@ export class PostDetailComponent {
           this.isSubmitting = false;
         },
       });
+  }
+
+  private toggleNameValidator(loggedIn: boolean) {
+    const nameControl = this.commentForm.get('authorName');
+    if (!nameControl) return;
+
+    if (loggedIn) {
+      nameControl.clearValidators();
+    } else {
+      nameControl.setValidators([Validators.required, Validators.maxLength(80)]);
+    }
+    nameControl.updateValueAndValidity();
   }
 }

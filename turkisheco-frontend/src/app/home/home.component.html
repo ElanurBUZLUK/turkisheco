@@ -1,77 +1,69 @@
-<main>
-  <div class="featured-grid">
-    <div class="card card-large">
+<div class="state" *ngIf="isLoading">Yükleniyor...</div>
+<div class="state state-error" *ngIf="error">{{ error }}</div>
+
+<main *ngIf="!isLoading && !error">
+  <div class="featured-grid" *ngIf="posts.length > 0; else noPosts">
+    <a
+      class="card card-large"
+      [routerLink]="['/posts', posts[0].slug]"
+    >
       <div class="author">
         <div class="avatar"></div>
-        <span>By Bruce Wayne</span>
+        <span>{{ posts[0].authorName }}</span>
       </div>
-      <h2>Understanding the Hype Around Sustainable Fashion</h2>
-      <p>Dive into this growing trend of eco-friendly fashion and why it matters for the planet.</p>
-      <a href="#" class="read-btn">
+      <h2>{{ posts[0].title }}</h2>
+      <p>{{ posts[0].contentMarkdown | slice:0:220 }}{{ posts[0].contentMarkdown.length > 220 ? '…' : '' }}</p>
+      <span class="read-btn">
         Read Article →
-      </a>
-    </div>
+      </span>
+    </a>
 
-    <div class="card card-small">
-      <h2>Self-Care Routines for Busy Millennials</h2>
-      <p>Practical tips to integrate self-care into a hectic schedule and improve overall well-being.</p>
-    </div>
+    <a
+      class="card card-small"
+      *ngIf="posts.length > 1"
+      [routerLink]="['/posts', posts[1].slug]"
+    >
+      <h2>{{ posts[1].title }}</h2>
+      <p>{{ posts[1].contentMarkdown | slice:0:140 }}{{ posts[1].contentMarkdown.length > 140 ? '…' : '' }}</p>
+    </a>
 
-    <div class="card card-small">
-      <h2>Self-Care Routines for Busy Millennials</h2>
-      <p>Prioritize the little things, set up a flexible schedule and improve overall well-being.</p>
-    </div>
+    <a
+      class="card card-small"
+      *ngIf="posts.length > 2"
+      [routerLink]="['/posts', posts[2].slug]"
+    >
+      <h2>{{ posts[2].title }}</h2>
+      <p>{{ posts[2].contentMarkdown | slice:0:140 }}{{ posts[2].contentMarkdown.length > 140 ? '…' : '' }}</p>
+    </a>
   </div>
 
-  <div class="section-header">
+  <ng-template #noPosts>
+    <div class="state">Henüz blog yazısı yok.</div>
+  </ng-template>
+
+  <div class="section-header" *ngIf="posts.length > 3">
     <h3>Recent Blog Posts</h3>
-    <button class="view-all-btn">View All Post</button>
+    <button class="view-all-btn" routerLink="/admin/posts">Tüm Yazılar</button>
   </div>
 
-  <div class="blog-grid">
-    <div class="blog-card">
-      <div class="blog-image" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 400 300&quot;><rect fill=&quot;%23b8a8a0&quot; width=&quot;400&quot; height=&quot;300&quot;/></svg>'); background-size: cover; background-position: center;">
+  <div class="blog-grid" *ngIf="posts.length > 3">
+    <a
+      class="blog-card"
+      *ngFor="let post of posts | slice:3"
+      [routerLink]="['/posts', post.slug]"
+    >
+      <div class="blog-image">
         <div class="blog-author">
           <div class="avatar"></div>
-          <span>By Bruce Wayne</span>
+          <span>{{ post.authorName }}</span>
         </div>
       </div>
       <div class="blog-content">
-        <div class="blog-date">February 28, 2021</div>
-        <h4>Profitable Online Business Trends in the Post-Pandemic Era</h4>
-        <p>Stay ahead in the market by leveraging data-driven insights for emerging online business opportunities.</p>
-        <a href="#" class="blog-read-btn">Read Article →</a>
+        <div class="blog-date">{{ post.createdAt | date: 'longDate' }}</div>
+        <h4>{{ post.title }}</h4>
+        <p>{{ post.contentMarkdown | slice:0:160 }}{{ post.contentMarkdown.length > 160 ? '…' : '' }}</p>
+        <span class="blog-read-btn">Read Article →</span>
       </div>
-    </div>
-
-    <div class="blog-card">
-      <div class="blog-image" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 400 300&quot;><rect fill=&quot;%23c8e8a8&quot; width=&quot;400&quot; height=&quot;300&quot;/></svg>'); background-size: cover; background-position: center;">
-        <div class="blog-author">
-          <div class="avatar"></div>
-          <span>By Bruce Wayne</span>
-        </div>
-      </div>
-      <div class="blog-content">
-        <div class="blog-date">March 5, 2021</div>
-        <h4>Wardrobe Essentials Every Fashionista Must Own</h4>
-        <p>Discover timeless clothing pieces that form the foundation of every stylish wardrobe.</p>
-        <a href="#" class="blog-read-btn">Read Article →</a>
-      </div>
-    </div>
-
-    <div class="blog-card">
-      <div class="blog-image" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 400 300&quot;><rect fill=&quot;%2388c8c8&quot; width=&quot;400&quot; height=&quot;300&quot;/></svg>'); background-size: cover; background-position: center;">
-        <div class="blog-author">
-          <div class="avatar"></div>
-          <span>By Bruce Wayne</span>
-        </div>
-      </div>
-      <div class="blog-content">
-        <div class="blog-date">October 28, 2021</div>
-        <h4>Fashion on a Budget: How to Look Chic Without Breaking the Bank</h4>
-        <p>Master the art of looking fashionable while keeping your finances in check.</p>
-        <a href="#" class="blog-read-btn">Read Article →</a>
-      </div>
-    </div>
+    </a>
   </div>
 </main>

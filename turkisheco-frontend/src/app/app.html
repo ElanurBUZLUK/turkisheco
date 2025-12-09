@@ -20,9 +20,20 @@
       <a routerLink="/forum" routerLinkActive="active">
         Topluluk
       </a>
-      <a routerLink="/account" routerLinkActive="active">
-        Hesap Oluştur/Giriş Yap
-      </a>
+      <ng-container *ngIf="auth.currentUser$ | async as user; else guestLinks">
+        <a routerLink="/account/profile" routerLinkActive="active">
+          Hesabım ({{ user.displayName || user.userName }})
+        </a>
+        <button class="link-button" type="button" (click)="logout()">Çıkış</button>
+      </ng-container>
+      <ng-template #guestLinks>
+        <a routerLink="/account/login" routerLinkActive="active">
+          Giriş Yap
+        </a>
+        <a routerLink="/account" routerLinkActive="active">
+          Kayıt Ol
+        </a>
+      </ng-template>
     </nav>
 
     <div class="search-container">

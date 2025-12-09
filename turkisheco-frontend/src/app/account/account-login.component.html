@@ -35,13 +35,13 @@
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="email">E-posta</label>
+        <label for="email">E-posta veya Kullanıcı Adı</label>
         <input
           type="email"
           id="email"
-          name="email"
-          placeholder="ornek@email.com"
-          [(ngModel)]="form.email"
+          name="userNameOrEmail"
+          placeholder="ornek@email.com veya kullanıcı adınız"
+          [(ngModel)]="form.userNameOrEmail"
           required
         />
       </div>
@@ -71,7 +71,11 @@
         <a href="#" class="forgot-password">Şifremi Unuttum?</a>
       </div>
 
-      <button type="submit" class="submit-btn">Giriş Yap</button>
+      <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Giriş yapılıyor...' : 'Giriş Yap' }}
+      </button>
+
+      <p *ngIf="error" class="error">{{ error }}</p>
     </form>
 
     <div class="divider">veya</div>

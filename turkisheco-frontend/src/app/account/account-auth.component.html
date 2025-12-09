@@ -37,25 +37,24 @@
     <form (ngSubmit)="onSubmit()">
       <div class="form-row">
         <div class="form-group">
-          <label for="firstName">Ad</label>
+          <label for="userName">Kullanıcı adı</label>
           <input
             type="text"
-            id="firstName"
-            name="firstName"
-            placeholder="Adınız"
-            [(ngModel)]="form.firstName"
+            id="userName"
+            name="userName"
+            placeholder="kullanici_adi"
+            [(ngModel)]="form.userName"
             required
           />
         </div>
         <div class="form-group">
-          <label for="lastName">Soyad</label>
+          <label for="displayName">Görünen isim</label>
           <input
             type="text"
-            id="lastName"
-            name="lastName"
-            placeholder="Soyadınız"
-            [(ngModel)]="form.lastName"
-            required
+            id="displayName"
+            name="displayName"
+            placeholder="Profilde görünecek ad"
+            [(ngModel)]="form.displayName"
           />
         </div>
       </div>
@@ -98,7 +97,11 @@
         </label>
       </div>
 
-      <button type="submit" class="submit-btn">Hesap Oluştur</button>
+      <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Kaydediliyor...' : 'Hesap Oluştur' }}
+      </button>
+
+      <p *ngIf="error" class="error">{{ error }}</p>
     </form>
 
     <div class="divider">veya</div>

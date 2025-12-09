@@ -4,6 +4,17 @@
   background: #f9f9f9;
 }
 
+.state {
+  text-align: center;
+  padding: 24px 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.state-error {
+  color: #b91c1c;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -243,6 +254,10 @@ main {
   display: flex;
   align-items: flex-end;
   padding: 20px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.25)),
+    linear-gradient(135deg, #dbeafe, #fce7f3);
+  background-size: cover;
+  background-position: center;
 }
 
 .blog-author {

@@ -52,6 +52,17 @@ body {
   letter-spacing: 0.5px;
 }
 
+.nb-nav .link-button {
+  border: none;
+  background: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
 .nb-nav a.active {
   text-decoration: underline;
 }
