@@ -65,7 +65,7 @@ export class ForumHomeComponent implements OnInit {
         this.isLoadingThreads = false;
       },
       error: () => {
-        this.error = 'Forum başlıkları yüklenirken bir hata oluştu.';
+        this.error = 'Topluluk başlıkları yüklenirken bir hata oluştu.';
         this.isLoadingThreads = false;
       },
     });
