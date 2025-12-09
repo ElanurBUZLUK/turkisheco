@@ -1,1 +1,40 @@
-<router-outlet></router-outlet>
+<header class="nb-header">
+  <div class="nb-header-inner">
+    <a
+      class="logo"
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      TurkishEcho
+    </a>
+
+    <nav class="nb-nav">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Ana Sayfa
+      </a>
+      <a routerLink="/forum" routerLinkActive="active">
+        Topluluk
+      </a>
+      <a routerLink="/account" routerLinkActive="active">
+        Hesap Oluştur/Giriş Yap
+      </a>
+    </nav>
+
+    <div class="search-container">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input type="text" placeholder="Type topics...">
+    </div>
+  </div>
+</header>
+
+<main class="app-main">
+  <router-outlet></router-outlet>
+</main>

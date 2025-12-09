@@ -1,0 +1,117 @@
+<div class="signup-container">
+  <div class="signup-left">
+    <div class="logo">TurkishEcho</div>
+    <h1>İçerik Dünyasına Hoş Geldiniz</h1>
+    <p>
+      Binlerce makale, podcast ve radyo yayınına erişim sağlayın. Kendi
+      içeriklerinizi paylaşın ve topluluğumuzun bir parçası olun.
+    </p>
+
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon">✓</div>
+        <span>Sınırsız içerik erişimi</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">✓</div>
+        <span>Kişiselleştirilmiş öneriler</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">✓</div>
+        <span>Yazarları takip edin</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">✓</div>
+        <span>Premium içeriklere özel erişim</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="signup-right">
+    <h2>Hesap Oluştur</h2>
+    <p class="subtitle">
+      Zaten hesabınız var mı?
+      <a routerLink="/account/login">Giriş Yapın</a>
+    </p>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">Ad</label>
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            placeholder="Adınız"
+            [(ngModel)]="form.firstName"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Soyad</label>
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            placeholder="Soyadınız"
+            [(ngModel)]="form.lastName"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-posta</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="ornek@email.com"
+          [(ngModel)]="form.email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Şifre</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="En az 8 karakter"
+          [(ngModel)]="form.password"
+          required
+        />
+      </div>
+
+      <div class="checkbox-group">
+        <input
+          type="checkbox"
+          id="terms"
+          name="terms"
+          [(ngModel)]="form.acceptTerms"
+          required
+        />
+        <label for="terms">
+          <a href="#">Kullanım Koşulları</a> ve <a href="#">Gizlilik Politikası</a>'nı kabul
+          ediyorum
+        </label>
+      </div>
+
+      <button type="submit" class="submit-btn">Hesap Oluştur</button>
+    </form>
+
+    <div class="divider">veya</div>
+
+    <div class="social-buttons">
+      <button type="button" class="social-btn">
+        <span class="social-icon google"></span>
+        Google
+      </button>
+      <button type="button" class="social-btn">
+        <span class="social-icon facebook"></span>
+        Facebook
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,40 +1,81 @@
-.layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+* {
+  box-sizing: border-box;
 }
 
-.header {
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: #f9f9f9;
+}
+
+.nb-header {
+  background: white;
+  padding: 20px 40px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #eee;
-  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
+}
+
+.nb-header-inner {
+  width: 100%;
+  max-width: 1400px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 32px;
+  align-items: center;
 }
 
 .logo {
+  font-size: 24px;
   font-weight: 700;
-  font-size: 1.4rem;
-}
-
-.nav a {
-  margin-left: 1rem;
+  font-style: italic;
+  color: #000;
   text-decoration: none;
-  color: #444;
-  font-weight: 500;
 }
 
-.nav a.active {
-  color: #c2185b;
-  border-bottom: 2px solid #c2185b;
-  padding-bottom: 0.2rem;
+.nb-nav {
+  display: flex;
+  gap: 24px;
+  align-items: center;
 }
 
-.content {
-  padding: 2rem;
+.nb-nav a {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nb-nav a.active {
+  text-decoration: underline;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #f5f5f5;
+}
+
+.search-container input {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 14px;
+  color: #999;
+}
+
+.app-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
 }

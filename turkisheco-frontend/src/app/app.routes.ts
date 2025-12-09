@@ -35,6 +35,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'account',
+    loadComponent: () =>
+      import('./account/account-auth.component').then(
+        (m) => m.AccountAuthComponent
+      ),
+  },
+  {
+    path: 'account/login',
+    loadComponent: () =>
+      import('./account/account-login.component').then(
+        (m) => m.AccountLoginComponent
+      ),
+  },
+  {
     path: 'users/:id',
     loadComponent: () =>
       import('./account/account.component').then(
