@@ -95,3 +95,4 @@ Writer OTP akışı development ortamında SMTP ayarı yoksa debug code'u API re
 - `backend/Turkisheco.Api/appsettings.Example.json`: beklenen config şablonu
 
 Gerçek connection string, JWT key ve production origin'leri repoya commit edilmemelidir.
+# turkisheco
