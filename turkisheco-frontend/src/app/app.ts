@@ -17,6 +17,10 @@ export class AppComponent {
     public writerAuth: WriterAuthService
   ) {}
 
+  get adminEntryRoute(): string {
+    return this.auth.getAdminRoute();
+  }
+
   logout() {
     this.auth.logout();
     this.writerAuth.logout();

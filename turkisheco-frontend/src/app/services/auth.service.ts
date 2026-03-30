@@ -70,6 +70,11 @@ export class AuthService {
     return this.currentUserSubject.value?.role === 'super_admin';
   }
 
+  getAdminRoute(): string {
+    const adminUserName = this.currentUserSubject.value?.userName ?? 'Ela';
+    return `/ww/${adminUserName}`;
+  }
+
   register(payload: { userName: string; email: string; password: string; displayName?: string }) {
     return this.http
       .post<AuthResponse>(`${this.apiBaseUrl}/auth/register`, payload)

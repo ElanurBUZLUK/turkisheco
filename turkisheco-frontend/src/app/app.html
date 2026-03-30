@@ -21,7 +21,7 @@
         Topluluk
       </a>
       <ng-container *ngIf="auth.currentUser$ | async as user; else guestLinks">
-        <a *ngIf="auth.isSuperAdmin()" routerLink="/admin/posts" routerLinkActive="active">
+        <a *ngIf="auth.isSuperAdmin()" [routerLink]="adminEntryRoute" routerLinkActive="active">
           Admin Paneli
         </a>
         <a *ngIf="auth.isSuperAdmin()" routerLink="/posts/new" routerLinkActive="active">
@@ -40,6 +40,9 @@
           <button class="link-button" type="button" (click)="logout()">Çıkış</button>
         </ng-container>
         <ng-template #publicGuestLinks>
+          <a [routerLink]="adminEntryRoute" routerLinkActive="active">
+            Yönetici Paneli
+          </a>
           <a routerLink="/account/login" routerLinkActive="active">
             Giriş Yap
           </a>

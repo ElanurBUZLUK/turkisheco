@@ -3,11 +3,17 @@
     <div class="logo">TurkishEcho</div>
 
     <div class="welcome-content">
-      <h1>Tekrar Hoş Geldiniz!</h1>
-      <p>
-        İçerik dünyasına geri dönün ve kaldığınız yerden devam edin. Yeni makaleler,
-        podcast'ler ve daha fazlası sizi bekliyor.
+      <h1>{{ isAdminEntry ? 'Yönetici Paneline Giriş' : 'Tekrar Hoş Geldiniz!' }}</h1>
+      <p *ngIf="isAdminEntry; else visitorCopy">
+        Bu giriş yalnızca super admin içindir. Giriş yaptıktan sonra yeni yazar oluşturma,
+        yeni yazı yazma ve onay bekleyen içerikleri yönetme paneline geçersiniz.
       </p>
+      <ng-template #visitorCopy>
+        <p>
+          İçerik dünyasına geri dönün ve kaldığınız yerden devam edin. Yeni makaleler,
+          podcast'ler ve daha fazlası sizi bekliyor.
+        </p>
+      </ng-template>
 
       <div class="stats">
         <div class="stat-item">
@@ -27,11 +33,17 @@
   </div>
 
   <div class="login-right">
-    <h2>Giriş Yap</h2>
-    <p class="subtitle">
-      Henüz hesabınız yok mu?
-      <a routerLink="/account">Kayıt Olun</a>
+    <h2>{{ isAdminEntry ? 'Super Admin Girişi' : 'Giriş Yap' }}</h2>
+    <p class="subtitle" *ngIf="isAdminEntry; else signupSubtitle">
+      İlk kurulumda henüz admin hesabı yoksa
+      <a routerLink="/account">ilk hesabı oluştur</a>.
     </p>
+    <ng-template #signupSubtitle>
+      <p class="subtitle">
+        Henüz hesabınız yok mu?
+        <a routerLink="/account">Kayıt Olun</a>
+      </p>
+    </ng-template>
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -72,15 +84,20 @@
       </div>
 
       <button type="submit" class="submit-btn" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Giriş yapılıyor...' : 'Giriş Yap' }}
+        {{ isSubmitting ? 'Giriş yapılıyor...' : (isAdminEntry ? 'Yönetici Paneline Gir' : 'Giriş Yap') }}
       </button>
 
       <p *ngIf="error" class="error">{{ error }}</p>
     </form>
 
-    <div class="divider">veya</div>
+    <div class="admin-entry-note" *ngIf="isAdminEntry">
+      Panel adresi: <strong>/admin/posts</strong><br />
+      Giriş yoksa sistem sizi otomatik olarak bu ekrana yönlendirir.
+    </div>
 
-    <div class="social-buttons">
+    <div class="divider" *ngIf="!isAdminEntry">veya</div>
+
+    <div class="social-buttons" *ngIf="!isAdminEntry">
       <button type="button" class="social-btn">
         <span class="social-icon google"></span>
         Google

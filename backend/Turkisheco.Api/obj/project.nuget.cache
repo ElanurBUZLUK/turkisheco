@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VqkWGNGecDZVuKOufRgX9IgLSNR8MCVP+8gTxgGoF3JErYfdxZpkD7Mnx3M9qV9ZOhxmOFnTwhRGCDXXREwF/g==",
+  "dgSpecHash": "+d4wjIXmW8tsI0XPmjDiEz/uwzaCY8cJiSOKlNAFtm3oiw0oWYInliQtoWdKEzcj1REUPJFaGwEQZ2tBmGuGlg==",
   "success": true,
-  "projectFilePath": "/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/Turkisheco.Api.csproj",
+  "projectFilePath": "/home/ela/Masaüstü/turkisheco1/backend/Turkisheco.Api/Turkisheco.Api.csproj",
   "expectedPackageFiles": [
     "/home/ela/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/home/ela/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",

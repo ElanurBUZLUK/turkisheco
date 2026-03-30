@@ -2,6 +2,13 @@
 <div class="state state-error" *ngIf="error">{{ error }}</div>
 
 <main *ngIf="!isLoading && !error">
+  <section class="state" style="margin-bottom: 1.5rem;">
+    <strong>Yönetici erişimi:</strong>
+    <a [routerLink]="adminEntryRoute">
+      {{ auth.isSuperAdmin() ? 'Admin paneline git' : 'Yönetici paneline giriş yap' }}
+    </a>
+  </section>
+
   <div class="featured-grid" *ngIf="posts.length > 0; else noPosts">
     <a
       class="card card-large"

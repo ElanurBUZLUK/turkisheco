@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { authGuard } from './core/auth.guard';
-import { adminGuard } from './core/admin.guard';
 import { editorGuard } from './core/editor.guard';
 
 export const routes: Routes = [
@@ -27,14 +26,23 @@ export const routes: Routes = [
   {
     path: 'admin',
     pathMatch: 'full',
-    redirectTo: 'admin/posts',
+    redirectTo: 'ww/Ela',
+  },
+  {
+    path: 'admin/login',
+    pathMatch: 'full',
+    redirectTo: 'ww/Ela',
   },
   {
     path: 'admin/posts',
-    canActivate: [adminGuard],
+    pathMatch: 'full',
+    redirectTo: 'ww/Ela',
+  },
+  {
+    path: 'ww/:username',
     loadComponent: () =>
-      import('./admin/admin-dashboard.component').then(
-        (m) => m.AdminDashboardComponent
+      import('./admin/admin-entry.component').then(
+        (m) => m.AdminEntryComponent
       ),
   },
   {

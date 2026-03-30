@@ -3131,11 +3131,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/Turkisheco.Api.csproj",
+      "projectUniqueName": "/home/ela/Masaüstü/turkisheco1/backend/Turkisheco.Api/Turkisheco.Api.csproj",
       "projectName": "Turkisheco.Api",
-      "projectPath": "/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/Turkisheco.Api.csproj",
+      "projectPath": "/home/ela/Masaüstü/turkisheco1/backend/Turkisheco.Api/Turkisheco.Api.csproj",
       "packagesPath": "/home/ela/.nuget/packages/",
-      "outputPath": "/home/ela/Masaüstü/turkisheco/backend/Turkisheco.Api/obj/",
+      "outputPath": "/home/ela/Masaüstü/turkisheco1/backend/Turkisheco.Api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/ela/.nuget/NuGet/NuGet.Config"
@@ -3218,7 +3218,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.121/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.125/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

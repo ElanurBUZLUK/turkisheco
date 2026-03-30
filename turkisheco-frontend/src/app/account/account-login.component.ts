@@ -23,6 +23,10 @@ export class AccountLoginComponent {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  get isAdminEntry(): boolean {
+    return this.router.url.startsWith('/admin') || this.router.url.startsWith('/ww');
+  }
+
   onSubmit(): void {
     if (!this.form.userNameOrEmail || !this.form.password) {
       this.error = 'Lütfen tüm alanları doldurun!';
@@ -46,12 +50,14 @@ export class AccountLoginComponent {
         next: () => {
           this.isSubmitting = false;
           this.router.navigateByUrl(
-            this.auth.isSuperAdmin() ? '/admin/posts' : '/'
+            this.auth.isSuperAdmin() ? this.auth.getAdminRoute() : '/'
           );
         },
         error: (err) => {
           console.error(err);
-          this.error = 'Giriş başarısız. Bilgileri kontrol edin.';
+          this.error = this.isAdminEntry
+            ? 'Yönetici girişi başarısız. Super admin bilgilerini kontrol edin.'
+            : 'Giriş başarısız. Bilgileri kontrol edin.';
           this.isSubmitting = false;
         },
       });

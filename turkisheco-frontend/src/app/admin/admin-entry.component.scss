@@ -1,0 +1,40 @@
+.admin-entry-shell {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.admin-entry-shell__intro {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 0;
+}
+
+.admin-entry-shell__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #66785c;
+}
+
+.admin-entry-shell h1 {
+  margin: 0 0 0.75rem;
+  font-size: 2rem;
+}
+
+.admin-entry-shell p {
+  margin: 0;
+  color: #55624f;
+  line-height: 1.6;
+}
+
+.admin-entry-shell__loading {
+  max-width: 900px;
+  margin: 0 auto 2rem;
+  padding: 1.5rem;
+  border-radius: 18px;
+  background: #f3f6ef;
+  color: #43503e;
+  text-align: center;
+  font-size: 1.05rem;
+}

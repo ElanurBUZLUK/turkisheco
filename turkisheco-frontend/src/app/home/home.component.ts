@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PostService } from '../services/post.service';
 import { Post } from '../models/post';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -13,10 +14,15 @@ import { Post } from '../models/post';
 })
 export class HomeComponent implements OnInit {
   private postService = inject(PostService);
+  readonly auth = inject(AuthService);
 
   posts: Post[] = [];
   isLoading = false;
   error: string | null = null;
+
+  get adminEntryRoute(): string {
+    return this.auth.getAdminRoute();
+  }
 
   ngOnInit(): void {
     this.loadPosts();
