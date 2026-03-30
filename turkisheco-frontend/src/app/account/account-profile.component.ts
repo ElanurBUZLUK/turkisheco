@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../environments/environment';
 
 interface UserProfile {
   id: number;
@@ -26,6 +27,7 @@ interface UserProfile {
   styleUrls: ['./account-profile.component.scss'],
 })
 export class AccountProfileComponent {
+  private readonly profileUrl = `${environment.apiBaseUrl}/profile/me`;
   private http = inject(HttpClient);
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
@@ -56,7 +58,7 @@ export class AccountProfileComponent {
     this.error = null;
 
     this.http
-      .get<UserProfile>('http://localhost:5080/api/profile/me')
+      .get<UserProfile>(this.profileUrl)
       .subscribe({
         next: (profile) => {
           this.profile = profile;
@@ -84,7 +86,7 @@ export class AccountProfileComponent {
     this.error = null;
 
     this.http
-      .put<UserProfile>('http://localhost:5080/api/profile/me', this.form.value)
+      .put<UserProfile>(this.profileUrl, this.form.value)
       .subscribe({
         next: (profile) => {
           this.profile = profile;

@@ -16,13 +16,7 @@ export interface ForumThread {
   forumUser?: ForumUser;
 }
 
-export interface CreateForumUserRequest {
-  userName: string;
-  bio?: string;
-}
-
 export interface CreateForumThreadRequest {
   title: string;
   content: string;
-  forumUserId: number;
 }

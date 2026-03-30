@@ -6,45 +6,32 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import {
-  ForumThread,
-  ForumUser,
-  CreateForumUserRequest,
-  CreateForumThreadRequest,
-} from '../models/forum.models';
+import { RouterLink } from '@angular/router';
+import { ForumThread, CreateForumThreadRequest } from '../models/forum.models';
 import { ForumService } from '../services/forum.service';
+import { AuthService, LoggedInUser } from '../services/auth.service';
 
 @Component({
   selector: 'app-forum-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './forum-home.component.html',
   styleUrls: ['./forum-home.component.scss'],
 })
 export class ForumHomeComponent implements OnInit {
   private fb = inject(FormBuilder);
   private forumService = inject(ForumService);
-
-  userForm: FormGroup;
+  private auth = inject(AuthService);
   threadForm: FormGroup;
 
-  currentUser: ForumUser | null = null;
+  currentUser: LoggedInUser | null = null;
 
   threads: ForumThread[] = [];
   isLoadingThreads = false;
-  isCreatingUser = false;
   isCreatingThread = false;
   error: string | null = null;
 
   constructor() {
-    this.userForm = this.fb.group({
-      userName: [
-        '',
-        [Validators.required, Validators.minLength(3), Validators.maxLength(20)],
-      ],
-      bio: [''],
-    });
-
     this.threadForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       content: ['', [Validators.required, Validators.minLength(5)]],
@@ -53,6 +40,39 @@ export class ForumHomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadThreads();
+    this.auth.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
+
+  createThread(): void {
+    if (!this.currentUser) {
+      this.error = 'Başlık açmak için önce giriş yapmalısın.';
+      return;
+    }
+
+    if (this.threadForm.invalid) {
+      this.threadForm.markAllAsTouched();
+      return;
+    }
+
+    this.isCreatingThread = true;
+
+    const payload: CreateForumThreadRequest = {
+      ...this.threadForm.value,
+    };
+
+    this.forumService.createThread(payload).subscribe({
+      next: (thread) => {
+        this.threadForm.reset();
+        this.threads = [thread, ...this.threads];
+        this.isCreatingThread = false;
+      },
+      error: () => {
+        this.error = 'Sohbet başlığı oluşturulurken bir hata oluştu. Oturumunun açık olduğundan emin ol.';
+        this.isCreatingThread = false;
+      },
+    });
   }
 
   loadThreads(): void {
@@ -67,59 +87,6 @@ export class ForumHomeComponent implements OnInit {
       error: () => {
         this.error = 'Topluluk başlıkları yüklenirken bir hata oluştu.';
         this.isLoadingThreads = false;
-      },
-    });
-  }
-
-  createUser(): void {
-    if (this.userForm.invalid) {
-      this.userForm.markAllAsTouched();
-      return;
-    }
-
-    this.isCreatingUser = true;
-
-    const payload: CreateForumUserRequest = this.userForm.value;
-
-    this.forumService.createUser(payload).subscribe({
-      next: (user) => {
-        this.currentUser = user;
-        this.isCreatingUser = false;
-      },
-      error: () => {
-        this.error = 'Profil oluşturulurken bir hata oluştu.';
-        this.isCreatingUser = false;
-      },
-    });
-  }
-
-  createThread(): void {
-    if (!this.currentUser) {
-      this.error = 'Önce kullanıcı adınla bir profil oluşturmalısın.';
-      return;
-    }
-
-    if (this.threadForm.invalid) {
-      this.threadForm.markAllAsTouched();
-      return;
-    }
-
-    this.isCreatingThread = true;
-
-    const payload: CreateForumThreadRequest = {
-      ...this.threadForm.value,
-      forumUserId: this.currentUser.id,
-    };
-
-    this.forumService.createThread(payload).subscribe({
-      next: (thread) => {
-        this.threadForm.reset();
-        this.threads = [thread, ...this.threads];
-        this.isCreatingThread = false;
-      },
-      error: () => {
-        this.error = 'Sohbet başlığı oluşturulurken bir hata oluştu.';
-        this.isCreatingThread = false;
       },
     });
   }

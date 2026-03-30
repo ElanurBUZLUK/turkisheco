@@ -36,38 +36,5 @@ namespace Turkisheco.Api.Controllers
             return Ok(user);
         }
 
-        public class CreateForumUserDto
-        {
-            public string UserName { get; set; } = string.Empty;
-            public string? Bio { get; set; }
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ForumUser>> Create([FromBody] CreateForumUserDto dto)
-        {
-            var userName = dto.UserName?.Trim();
-            if (string.IsNullOrWhiteSpace(userName))
-                return BadRequest("UserName is required.");
-
-            var existing = await _context.ForumUsers
-                .FirstOrDefaultAsync(u => u.UserName.ToLower() == userName.ToLower());
-
-            if (existing != null)
-            {
-                return Ok(existing);
-            }
-
-            var user = new ForumUser
-            {
-                UserName = userName,
-                Bio = dto.Bio,
-                CreatedAt = System.DateTime.UtcNow
-            };
-
-            _context.ForumUsers.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-        }
     }
 }

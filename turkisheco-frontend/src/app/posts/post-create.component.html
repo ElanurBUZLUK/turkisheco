@@ -1,58 +1,168 @@
-<div class="post-create">
-  <h1>Yeni Yazı Oluştur</h1>
-
-  <form (ngSubmit)="save()" #f="ngForm">
-    <div class="form-group">
-      <label for="title">Başlık</label>
-      <input
-        id="title"
-        name="title"
-        type="text"
-        [(ngModel)]="model.title"
-        (blur)="generateSlug()"
-        required
-      />
+<section class="post-create">
+  <header class="post-create__hero">
+    <div>
+      <p class="post-create__eyebrow">{{ isAdmin ? 'Super Admin' : 'Writer' }}</p>
+      <h1>{{ pageTitle }}</h1>
+      <p>{{ pageDescription }}</p>
     </div>
+    <button type="button" class="ghost-button" (click)="startNew()">Yeni Taslak</button>
+  </header>
 
-    <div class="form-group">
-      <label for="slug">Slug (URL)</label>
-      <input
-        id="slug"
-        name="slug"
-        type="text"
-        [(ngModel)]="model.slug"
-        required
-      />
-      <small>Başlıktan otomatik oluşur, istersen değiştirebilirsin.</small>
+  <div class="post-create__layout">
+    <aside class="post-sidebar">
+      <label class="post-sidebar__filter">
+        <span>Durum Filtresi</span>
+        <select [(ngModel)]="selectedStatusFilter" (ngModelChange)="onFilterChange()">
+          <option *ngFor="let option of statusOptions" [ngValue]="option">
+            {{ option || 'tümü' }}
+          </option>
+        </select>
+      </label>
+
+      <div class="post-sidebar__list" *ngIf="!isLoadingPosts; else loadingPosts">
+        <button
+          type="button"
+          *ngFor="let post of posts"
+          (click)="selectPost(post)"
+          [class.active]="selectedPostId === post.id"
+        >
+          <strong>{{ post.title }}</strong>
+          <span>{{ post.status }} · {{ post.updatedAt || post.createdAt | date: 'short' }}</span>
+        </button>
+        <p *ngIf="!posts.length" class="muted">Bu filtrede içerik yok.</p>
+      </div>
+
+      <ng-template #loadingPosts>
+        <p class="muted">İçerikler yükleniyor...</p>
+      </ng-template>
+    </aside>
+
+    <div class="post-editor">
+      <form (ngSubmit)="saveDraft()" #f="ngForm">
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <label for="title">Başlık</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              [(ngModel)]="model.title"
+              (blur)="generateSlug()"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="slug">Slug</label>
+            <input
+              id="slug"
+              name="slug"
+              type="text"
+              [(ngModel)]="model.slug"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="category">Kategori</label>
+            <input
+              id="category"
+              name="category"
+              type="text"
+              [(ngModel)]="model.category"
+            />
+          </div>
+
+          <div class="form-group form-group--full">
+            <label for="summary">Özet</label>
+            <textarea
+              id="summary"
+              name="summary"
+              rows="3"
+              [(ngModel)]="model.summary"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="coverImageUrl">Kapak Görseli URL</label>
+            <input
+              id="coverImageUrl"
+              name="coverImageUrl"
+              type="url"
+              [(ngModel)]="model.coverImageUrl"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="tags">Etiketler</label>
+            <input
+              id="tags"
+              name="tags"
+              type="text"
+              [(ngModel)]="tagsInput"
+              placeholder="iklim, sürdürülebilirlik, topluluk"
+            />
+          </div>
+
+          <div class="form-group form-group--full">
+            <label for="content">İçerik</label>
+            <textarea
+              id="content"
+              name="contentMarkdown"
+              rows="14"
+              [(ngModel)]="model.contentMarkdown"
+              required
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" [disabled]="isSaving || f.invalid">
+            {{ isSaving ? 'Kaydediliyor...' : 'Taslak Kaydet' }}
+          </button>
+          <button
+            *ngIf="isWriter"
+            type="button"
+            class="secondary-button"
+            (click)="submitForReview()"
+            [disabled]="isSaving || f.invalid"
+          >
+            İncelemeye Gönder
+          </button>
+          <button
+            *ngIf="isAdmin"
+            type="button"
+            class="secondary-button"
+            (click)="publishNow()"
+            [disabled]="isSaving || f.invalid"
+          >
+            Doğrudan Yayımla
+          </button>
+          <button
+            *ngIf="selectedPostId"
+            type="button"
+            class="danger-button"
+            (click)="deleteSelected()"
+            [disabled]="isSaving"
+          >
+            Sil
+          </button>
+        </div>
+
+        <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+        <p class="error" *ngIf="error">{{ error }}</p>
+      </form>
+
+      <section class="preview-card">
+        <p class="post-create__eyebrow">Önizleme</p>
+        <h2>{{ model.title || 'Başlık bekleniyor' }}</h2>
+        <p *ngIf="model.summary">{{ model.summary }}</p>
+        <div class="preview-meta">
+          <span *ngIf="model.category">{{ model.category }}</span>
+          <span *ngFor="let tag of previewTags()">{{ tag }}</span>
+        </div>
+        <pre>{{ model.contentMarkdown || 'İçerik yazdıkça burada görünür.' }}</pre>
+      </section>
     </div>
-
-    <div class="form-group">
-      <label for="authorName">Yazar Adı</label>
-      <input
-        id="authorName"
-        name="authorName"
-        type="text"
-        [(ngModel)]="model.authorName"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="content">İçerik (Markdown)</label>
-      <textarea
-        id="content"
-        name="contentMarkdown"
-        rows="10"
-        [(ngModel)]="model.contentMarkdown"
-        required
-      ></textarea>
-    </div>
-
-    <div class="actions">
-      <button type="submit" [disabled]="isSaving || f.invalid">
-        {{ isSaving ? 'Kaydediliyor...' : 'Kaydet' }}
-      </button>
-    </div>
-
-    <p class="error" *ngIf="error">{{ error }}</p>
-  </form>
-</div>
+  </div>
+</section>

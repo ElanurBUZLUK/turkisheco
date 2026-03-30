@@ -3,8 +3,8 @@
     <p class="forum__eyebrow">Topluluk</p>
     <h1 class="forum__title">Topluluk Sohbetleri</h1>
     <p class="forum__subtitle">
-      Misafir olarak kullanıcı adınla profil oluştur, yeni sohbet başlıkları aç
-      ve diğerleriyle fikirlerini paylaş.
+      Giriş yaparak yeni sohbet başlıkları açabilir ve diğerleriyle fikirlerini
+      paylaşabilirsin.
     </p>
   </section>
 
@@ -46,57 +46,23 @@
       </div>
     </section>
 
-    <!-- Sağ: profil + yeni başlık -->
+    <!-- Sağ: oturum + yeni başlık -->
     <section class="forum__column forum__actions">
-      <!-- Profil kartı -->
       <div class="card">
-        <h2 class="card__title">Profilini oluştur</h2>
-        <p class="card__subtitle">
-          Toplulukta kullanmak istediğin bir kullanıcı adı seç.
+        <h2 class="card__title">Oturum durumu</h2>
+        <p class="card__subtitle" *ngIf="currentUser; else loginPrompt">
+          Şu anda
+          <strong>{{ currentUser.displayName || currentUser.userName }}</strong>
+          olarak giriş yaptın.
         </p>
-
-        <form [formGroup]="userForm" (ngSubmit)="createUser()" class="form">
-          <label class="form__field">
-            <span>Kullanıcı adı</span>
-            <input
-              type="text"
-              formControlName="userName"
-              placeholder="ör. eco_gezgin"
-            />
-            <small
-              class="form__error"
-              *ngIf="
-                userForm.get('userName')?.touched &&
-                userForm.get('userName')?.invalid
-              "
-            >
-              Kullanıcı adı 3–20 karakter olmalıdır.
-            </small>
-          </label>
-
-          <label class="form__field">
-            <span>Kısa bio (isteğe bağlı)</span>
-            <textarea
-              rows="2"
-              formControlName="bio"
-              placeholder="Kısaca kendini tanıtabilirsin."
-            ></textarea>
-          </label>
-
-          <button class="btn" type="submit" [disabled]="isCreatingUser">
-            <span *ngIf="!currentUser && !isCreatingUser">Profil oluştur</span>
-            <span *ngIf="currentUser && !isCreatingUser">Profilini güncelle</span>
-            <span *ngIf="isCreatingUser">Kaydediliyor…</span>
-          </button>
-
-          <p *ngIf="currentUser" class="form__hint">
-            Şu anda <strong>{{ currentUser.userName }}</strong> olarak giriş
-            yapmış durumdasın.
+        <ng-template #loginPrompt>
+          <p class="card__subtitle">
+            Başlık açmak için önce hesabınla giriş yapmalısın.
           </p>
-        </form>
+          <a class="btn" routerLink="/account/login">Giriş yap</a>
+        </ng-template>
       </div>
 
-      <!-- Yeni başlık kartı -->
       <div class="card">
         <h2 class="card__title">Yeni sohbet başlığı</h2>
         <p class="card__subtitle">
@@ -128,7 +94,7 @@
           </button>
 
           <p class="form__hint" *ngIf="!currentUser">
-            Başlık açmadan önce yukarıdan bir kullanıcı adı seçmen gerekiyor.
+            Başlık açmadan önce giriş yapman gerekiyor.
           </p>
         </form>
       </div>

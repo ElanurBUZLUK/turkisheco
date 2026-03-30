@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Turkisheco.Api.Data;
@@ -18,6 +20,12 @@ namespace Turkisheco.Api.Controllers
         public ForumThreadsController(AppDbContext context)
         {
             _context = context;
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(userId, out var id) ? id : null;
         }
 
         [HttpGet]
@@ -57,14 +65,17 @@ namespace Turkisheco.Api.Controllers
         {
             public string Title { get; set; } = string.Empty;
             public string Content { get; set; } = string.Empty;
-            public int ForumUserId { get; set; }
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ForumThread>> Create([FromBody] CreateForumThreadDto dto)
         {
-            var user = await _context.ForumUsers.FindAsync(dto.ForumUserId);
-            if (user == null) return BadRequest("Geçersiz kullanıcı.");
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null) return Unauthorized();
+
+            var user = await _context.ForumUsers.FindAsync(currentUserId.Value);
+            if (user == null) return Unauthorized();
 
             var title = dto.Title?.Trim();
             if (string.IsNullOrWhiteSpace(title))

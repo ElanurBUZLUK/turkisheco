@@ -1,0 +1,104 @@
+<section class="admin-dashboard">
+  <header class="admin-dashboard__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Super Admin</p>
+      <h1>Ana Yönetici Paneli</h1>
+      <p>Yeni yazar oluştur, yeni içerik başlat ve review kuyruğunu yönet.</p>
+    </div>
+    <a class="admin-dashboard__cta" routerLink="/posts/new">Yeni Yazı Yaz</a>
+  </header>
+
+  <div class="admin-dashboard__grid">
+    <section class="panel">
+      <h2>Yeni Yazar Oluştur</h2>
+      <form [formGroup]="writerForm" (ngSubmit)="createWriter()" class="panel__form">
+        <label>
+          <span>Username</span>
+          <input formControlName="username" type="text" />
+        </label>
+        <label>
+          <span>Email</span>
+          <input formControlName="email" type="email" />
+        </label>
+        <button type="submit" [disabled]="isSavingWriter">
+          {{ isSavingWriter ? 'Kaydediliyor...' : 'Yazar Oluştur' }}
+        </button>
+      </form>
+      <p class="panel__error" *ngIf="writerError">{{ writerError }}</p>
+      <p class="panel__hint">Reserved username'ler: {{ reservedUsernames.join(', ') }}</p>
+    </section>
+
+    <section class="panel">
+      <h2>Mevcut Yazarlar</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Oluşturulma</th>
+              <th>Son Giriş</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let writer of writers">
+              <td>{{ writer.username }}</td>
+              <td>{{ writer.email }}</td>
+              <td>{{ writer.isActive ? 'active' : 'passive' }}</td>
+              <td>{{ writer.createdAt | date: 'short' }}</td>
+              <td>{{ writer.lastLoginAt ? (writer.lastLoginAt | date: 'short') : 'Henüz yok' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel panel--full">
+    <div class="panel__header">
+      <div>
+        <h2>Onay Bekleyen Yazılar</h2>
+        <p class="panel__hint">submitted_for_review ve approved durumları burada görünür.</p>
+      </div>
+    </div>
+
+    <p class="panel__error" *ngIf="queueError">{{ queueError }}</p>
+
+    <div class="review-layout" *ngIf="!isLoading">
+      <aside class="review-list">
+        <button
+          type="button"
+          *ngFor="let post of reviewPosts"
+          (click)="selectPost(post)"
+          [class.active]="selectedPost?.id === post.id"
+        >
+          <strong>{{ post.title }}</strong>
+          <span>{{ post.authorName }} · {{ post.status }}</span>
+        </button>
+      </aside>
+
+      <article class="review-detail" *ngIf="selectedPost; else noSelection">
+        <p class="review-detail__meta">{{ selectedPost.authorName }} · {{ selectedPost.createdAt | date: 'short' }}</p>
+        <h3>{{ selectedPost.title }}</h3>
+        <p *ngIf="selectedPost.summary">{{ selectedPost.summary }}</p>
+        <pre>{{ selectedPost.contentMarkdown }}</pre>
+
+        <label class="review-note">
+          <span>Admin Notu</span>
+          <textarea rows="4" [(ngModel)]="reviewNote"></textarea>
+        </label>
+
+        <div class="review-actions">
+          <button type="button" (click)="approveSelected()">Onayla</button>
+          <button type="button" (click)="rejectSelected()">Reddet</button>
+          <button type="button" (click)="publishSelected()">Yayımla</button>
+        </div>
+      </article>
+
+      <ng-template #noSelection>
+        <div class="review-detail review-detail--empty">Review kuyruğu boş.</div>
+      </ng-template>
+    </div>
+  </section>
+</section>

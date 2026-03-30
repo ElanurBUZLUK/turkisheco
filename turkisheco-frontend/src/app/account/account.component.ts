@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { UserProfile } from '../models/user-profile';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <div class="page account-page" *ngIf="profile">
       <div class="profile-header">
@@ -25,21 +25,13 @@ import { UserProfile } from '../models/user-profile';
         </ng-template>
 
         <div class="info">
-          <h1>{{ profile.userName }}</h1>
-          <p class="email">{{ profile.email }}</p>
-          <textarea
-            [(ngModel)]="editBio"
-            rows="3"
-            placeholder="Biyografi yaz..."
-          ></textarea>
-
-          <input
-            type="text"
-            [(ngModel)]="editAvatarUrl"
-            placeholder="Profil fotoğrafı URL"
-          />
-
-          <button (click)="save()" [disabled]="saving">Kaydet</button>
+          <h1>{{ profile.displayName || profile.userName }}</h1>
+          <p class="username">@{{ profile.userName }}</p>
+          <p *ngIf="profile.bio; else noBio">{{ profile.bio }}</p>
+          <ng-template #noBio>
+            <p class="bio-placeholder">Henüz biyografi eklenmemiş.</p>
+          </ng-template>
+          <a *ngIf="isOwnProfile" routerLink="/account/profile">Profilini düzenle</a>
         </div>
       </div>
 
@@ -50,7 +42,7 @@ import { UserProfile } from '../models/user-profile';
             <li *ngFor="let c of profile.comments">
               <small>{{ c.createdAt | date: 'short' }}</small><br />
               {{ c.content }}
-              <a [routerLink]="['/posts', c.postId]">Yazıya git</a>
+              <a [routerLink]="['/posts', c.postSlug]">Yazıya git</a>
             </li>
           </ul>
         </div>
@@ -60,7 +52,7 @@ import { UserProfile } from '../models/user-profile';
           <ul>
             <li *ngFor="let t of profile.topics">
               <small>{{ t.createdAt | date: 'short' }}</small><br />
-              <a [routerLink]="['/forum', t.slug]">{{ t.title }}</a>
+              <a routerLink="/forum">{{ t.title }}</a>
             </li>
           </ul>
         </div>
@@ -80,11 +72,10 @@ import { UserProfile } from '../models/user-profile';
 export class AccountComponent {
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
+  private auth = inject(AuthService);
 
   profile?: UserProfile;
-  editBio = '';
-  editAvatarUrl = '';
-  saving = false;
+  isOwnProfile = false;
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -93,21 +84,8 @@ export class AccountComponent {
     this.userService.getProfile(id).subscribe({
       next: (profile) => {
         this.profile = profile;
-        this.editBio = profile.bio ?? '';
-        this.editAvatarUrl = profile.avatarUrl ?? '';
+        this.isOwnProfile = this.auth.getCurrentUser()?.forumUserId === profile.id;
       }
-    });
-  }
-
-  save() {
-    if (!this.profile) return;
-    this.saving = true;
-    this.userService.updateProfile(this.profile.id, {
-      bio: this.editBio,
-      avatarUrl: this.editAvatarUrl
-    }).subscribe({
-      next: () => { this.saving = false; },
-      error: () => { this.saving = false; }
     });
   }
 }

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 namespace Turkisheco.Api.Dto
 {
-    public class UserProfileDto
+    public class PublicUserProfileDto
     {
         public int Id { get; set; }
         public string UserName { get; set; } = null!;
-        public string Email { get; set; } = null!;
         public string? DisplayName { get; set; }
         public string? Bio { get; set; }
         public string? AvatarUrl { get; set; }
@@ -16,10 +15,16 @@ namespace Turkisheco.Api.Dto
         public List<UserTopicDto> Topics { get; set; } = new();
     }
 
+    public class UserProfileDto : PublicUserProfileDto
+    {
+        public string Email { get; set; } = null!;
+    }
+
     public class UserCommentDto
     {
         public int Id { get; set; }
         public int PostId { get; set; }
+        public string PostSlug { get; set; } = null!;
         public string Content { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
     }

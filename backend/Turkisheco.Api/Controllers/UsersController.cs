@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Turkisheco.Api.Data;
@@ -18,21 +20,28 @@ namespace Turkisheco.Api.Controllers
             _db = db;
         }
 
+        private int? GetCurrentUserId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(userId, out var id) ? id : null;
+        }
+
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<UserProfileDto>> GetById(int id)
+        public async Task<ActionResult<PublicUserProfileDto>> GetById(int id)
         {
             var user = await _db.ForumUsers
                 .Include(u => u.Comments)
+                    .ThenInclude(c => c.Post)
                 .Include(u => u.Topics)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null) return NotFound();
 
-            var dto = new UserProfileDto
+            var dto = new PublicUserProfileDto
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Email = user.Email,
+                DisplayName = user.DisplayName,
                 Bio = user.Bio,
                 AvatarUrl = user.AvatarUrl,
                 Comments = user.Comments
@@ -41,6 +50,7 @@ namespace Turkisheco.Api.Controllers
                     {
                         Id = c.Id,
                         PostId = c.PostId,
+                        PostSlug = c.Post.Slug,
                         Content = c.Content,
                         CreatedAt = c.CreatedAt
                     }).ToList(),
@@ -59,10 +69,27 @@ namespace Turkisheco.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, UpdateProfileDto dto)
         {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
+
+            if (currentUserId.Value != id)
+            {
+                return Forbid();
+            }
+
             var user = await _db.ForumUsers.FindAsync(id);
             if (user == null) return NotFound();
+
+            if (!string.IsNullOrWhiteSpace(dto.DisplayName))
+            {
+                user.DisplayName = dto.DisplayName.Trim();
+            }
 
             user.Bio = dto.Bio;
             user.AvatarUrl = dto.AvatarUrl;

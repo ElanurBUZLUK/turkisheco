@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
+import { authGuard } from './core/auth.guard';
+import { adminGuard } from './core/admin.guard';
+import { editorGuard } from './core/editor.guard';
 
 export const routes: Routes = [
   {
@@ -8,6 +11,7 @@ export const routes: Routes = [
   },
   {
     path: 'posts/new',
+    canActivate: [editorGuard],
     loadComponent: () =>
       import('./posts/post-create.component').then(
         (m) => m.PostCreateComponent
@@ -21,10 +25,16 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'admin',
+    pathMatch: 'full',
+    redirectTo: 'admin/posts',
+  },
+  {
     path: 'admin/posts',
+    canActivate: [adminGuard],
     loadComponent: () =>
-      import('./posts/posts-list.component').then(
-        (m) => m.PostsListComponent
+      import('./admin/admin-dashboard.component').then(
+        (m) => m.AdminDashboardComponent
       ),
   },
   {
@@ -32,6 +42,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./forum/forum-home.component').then(
         (m) => m.ForumHomeComponent
+      ),
+  },
+  {
+    path: 'w/:username',
+    loadComponent: () =>
+      import('./writers/writer-access.component').then(
+        (m) => m.WriterAccessComponent
       ),
   },
   {
@@ -57,6 +74,7 @@ export const routes: Routes = [
   },
   {
     path: 'account/profile',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./account/account-profile.component').then(
         (m) => m.AccountProfileComponent

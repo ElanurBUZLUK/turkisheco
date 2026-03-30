@@ -21,18 +21,32 @@
         Topluluk
       </a>
       <ng-container *ngIf="auth.currentUser$ | async as user; else guestLinks">
+        <a *ngIf="auth.isSuperAdmin()" routerLink="/admin/posts" routerLinkActive="active">
+          Admin Paneli
+        </a>
+        <a *ngIf="auth.isSuperAdmin()" routerLink="/posts/new" routerLinkActive="active">
+          Yeni Yazı
+        </a>
         <a routerLink="/account/profile" routerLinkActive="active">
           Hesabım ({{ user.displayName || user.userName }})
         </a>
         <button class="link-button" type="button" (click)="logout()">Çıkış</button>
       </ng-container>
       <ng-template #guestLinks>
-        <a routerLink="/account/login" routerLinkActive="active">
-          Giriş Yap
-        </a>
-        <a routerLink="/account" routerLinkActive="active">
-          Kayıt Ol
-        </a>
+        <ng-container *ngIf="writerAuth.currentWriter$ | async as writer; else publicGuestLinks">
+          <a routerLink="/posts/new" routerLinkActive="active">
+            Writer Paneli ({{ writer.username }})
+          </a>
+          <button class="link-button" type="button" (click)="logout()">Çıkış</button>
+        </ng-container>
+        <ng-template #publicGuestLinks>
+          <a routerLink="/account/login" routerLinkActive="active">
+            Giriş Yap
+          </a>
+          <a routerLink="/account" routerLinkActive="active">
+            Kayıt Ol
+          </a>
+        </ng-template>
       </ng-template>
     </nav>
 

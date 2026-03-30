@@ -1,0 +1,89 @@
+<section class="writer-access">
+  <div class="writer-access__panel">
+    <p class="writer-access__eyebrow">Writer Access</p>
+    <h1 class="writer-access__title">/w/{{ username }}</h1>
+
+    <p class="writer-access__copy" *ngIf="!isChecking">
+      Kayıtlı writer e-postasına tek kullanımlık kod gönderip giriş
+      doğrulayabilirsin.
+    </p>
+
+    <div class="writer-access__status" *ngIf="isChecking">
+      Writer hesabı doğrulanıyor...
+    </div>
+
+    <div class="writer-access__status writer-access__status--error" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <div class="writer-access__status writer-access__status--info" *ngIf="info">
+      {{ info }}
+    </div>
+
+    <div
+      class="writer-access__status writer-access__status--debug"
+      *ngIf="debugCode"
+    >
+      Development debug code: <strong>{{ debugCode }}</strong>
+    </div>
+
+    <div class="writer-access__details" *ngIf="!isChecking && writerExists && writerActive">
+      <div>
+        <strong>Kullanıcı adı</strong>
+        <p>{{ username }}</p>
+      </div>
+      <div>
+        <strong>Giriş yöntemi</strong>
+        <p>Kayıtlı e-posta adresine OTP kodu gönderilir.</p>
+      </div>
+    </div>
+
+    <div class="writer-access__flow" *ngIf="!isChecking && writerExists && writerActive">
+      <button
+        class="writer-access__cta"
+        type="button"
+        (click)="requestCode()"
+        [disabled]="isSendingCode || resendCountdown > 0"
+      >
+        <span *ngIf="!isSendingCode && !codeSent">Giriş kodu gönder</span>
+        <span *ngIf="!isSendingCode && codeSent && resendCountdown === 0">Kodu tekrar gönder</span>
+        <span *ngIf="!isSendingCode && resendCountdown > 0">Tekrar gönder ({{ resendCountdown }} sn)</span>
+        <span *ngIf="isSendingCode">Gönderiliyor...</span>
+      </button>
+
+      <form
+        class="writer-access__code-form"
+        [formGroup]="codeForm"
+        (ngSubmit)="verifyCode()"
+        *ngIf="codeSent"
+      >
+        <label>
+          <span>Giriş kodu</span>
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="8"
+            formControlName="code"
+            placeholder="6 haneli kod"
+          />
+        </label>
+        <small
+          class="writer-access__field-error"
+          *ngIf="codeForm.get('code')?.touched && codeForm.get('code')?.invalid"
+        >
+          Kod alanı zorunludur.
+        </small>
+
+        <button class="writer-access__verify" type="submit" [disabled]="isVerifyingCode">
+          <span *ngIf="!isVerifyingCode">Kodu doğrula</span>
+          <span *ngIf="isVerifyingCode">Doğrulanıyor...</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="writer-access__actions">
+      <a class="writer-access__link" routerLink="/">Ana sayfaya dön</a>
+      <a class="writer-access__link" routerLink="/account/login">Mevcut giriş</a>
+    </div>
+  </div>
+</section>

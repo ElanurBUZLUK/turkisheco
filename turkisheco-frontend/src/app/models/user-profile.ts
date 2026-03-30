@@ -1,6 +1,7 @@
 export interface UserCommentSummary {
   id: number;
   postId: number;
+  postSlug: string;
   content: string;
   createdAt: string;
 }
@@ -15,7 +16,7 @@ export interface UserTopicSummary {
 export interface UserProfile {
   id: number;
   userName: string;
-  email: string;
+  displayName?: string | null;
   bio?: string | null;
   avatarUrl?: string | null;
   comments: UserCommentSummary[];

@@ -14,6 +14,8 @@ namespace Turkisheco.Api.Data
         public DbSet<ForumUser> ForumUsers => Set<ForumUser>();
         public DbSet<ForumThread> ForumThreads => Set<ForumThread>();
         public DbSet<ForumTopic> ForumTopics => Set<ForumTopic>();
+        public DbSet<Writer> Writers => Set<Writer>();
+        public DbSet<WriterLoginCode> WriterLoginCodes => Set<WriterLoginCode>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +29,14 @@ namespace Turkisheco.Api.Data
 
                 entity.Property(p => p.Slug)
                       .HasMaxLength(200)
+                      .IsRequired();
+
+                entity.Property(p => p.Status)
+                      .HasMaxLength(40)
+                      .IsRequired();
+
+                entity.Property(p => p.AuthorRole)
+                      .HasMaxLength(40)
                       .IsRequired();
 
                 entity.HasIndex(p => p.Slug)
@@ -66,6 +76,10 @@ namespace Turkisheco.Api.Data
 
                 entity.Property(u => u.Email)
                       .HasMaxLength(256)
+                      .IsRequired();
+
+                entity.Property(u => u.Role)
+                      .HasMaxLength(40)
                       .IsRequired();
 
                 entity.HasIndex(u => u.UserName)
@@ -112,6 +126,32 @@ namespace Turkisheco.Api.Data
                 entity.HasOne(t => t.Author)
                       .WithMany(u => u.Topics)
                       .HasForeignKey(t => t.AuthorId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Writer>(entity =>
+            {
+                entity.Property(w => w.Username)
+                      .HasMaxLength(64)
+                      .IsRequired();
+
+                entity.Property(w => w.Email)
+                      .HasMaxLength(256)
+                      .IsRequired();
+
+                entity.HasIndex(w => w.Username)
+                      .IsUnique();
+            });
+
+            modelBuilder.Entity<WriterLoginCode>(entity =>
+            {
+                entity.Property(c => c.CodeHash)
+                      .HasMaxLength(128)
+                      .IsRequired();
+
+                entity.HasOne(c => c.Writer)
+                      .WithMany(w => w.LoginCodes)
+                      .HasForeignKey(c => c.WriterId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
         }

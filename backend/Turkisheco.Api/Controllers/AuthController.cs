@@ -27,8 +27,8 @@ namespace Turkisheco.Api.Controllers
 
         public record RegisterRequest(string UserName, string Email, string Password, string? DisplayName);
         public record LoginRequest(string UserNameOrEmail, string Password);
-        public record AuthResponse(string Token, int ForumUserId, string UserName, string DisplayName);
-        public record AccountResponse(int Id, string UserName, string Email, string DisplayName, string? Bio, string? AvatarUrl);
+        public record AuthResponse(string Token, int ForumUserId, string UserName, string DisplayName, string Role);
+        public record AccountResponse(int Id, string UserName, string Email, string DisplayName, string Role, string? Bio, string? AvatarUrl);
 
         [HttpPost("register")]
         [AllowAnonymous]
@@ -39,13 +39,16 @@ namespace Turkisheco.Api.Controllers
                 return BadRequest("Kullanıcı adı veya e-posta zaten kullanılıyor.");
             }
 
+            var hasAdmin = await _db.ForumUsers.AnyAsync(u => u.Role == "super_admin");
+
             var user = new ForumUser
             {
                 UserName = request.UserName.Trim(),
                 Email = request.Email.Trim(),
                 DisplayName = string.IsNullOrWhiteSpace(request.DisplayName)
                     ? request.UserName.Trim()
-                    : request.DisplayName.Trim()
+                    : request.DisplayName.Trim(),
+                Role = hasAdmin ? "member" : "super_admin"
             };
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -55,7 +58,7 @@ namespace Turkisheco.Api.Controllers
 
             var token = GenerateToken(user);
 
-            return new AuthResponse(token, user.Id, user.UserName, user.DisplayName);
+            return new AuthResponse(token, user.Id, user.UserName, user.DisplayName, user.Role);
         }
 
         [HttpPost("login")]
@@ -74,7 +77,7 @@ namespace Turkisheco.Api.Controllers
 
             var token = GenerateToken(user);
 
-            return new AuthResponse(token, user.Id, user.UserName, user.DisplayName);
+            return new AuthResponse(token, user.Id, user.UserName, user.DisplayName, user.Role);
         }
 
         [HttpGet("me")]
@@ -90,7 +93,7 @@ namespace Turkisheco.Api.Controllers
             if (user == null)
                 return NotFound();
 
-            return new AccountResponse(user.Id, user.UserName, user.Email, user.DisplayName, user.Bio, user.AvatarUrl);
+            return new AccountResponse(user.Id, user.UserName, user.Email, user.DisplayName, user.Role, user.Bio, user.AvatarUrl);
         }
 
         private string GenerateToken(ForumUser user)
@@ -100,6 +103,8 @@ namespace Turkisheco.Api.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim("actor_type", "forum_user"),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));

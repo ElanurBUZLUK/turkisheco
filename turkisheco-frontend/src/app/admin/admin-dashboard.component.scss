@@ -1,0 +1,164 @@
+.admin-dashboard {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.admin-dashboard__hero,
+.panel {
+  background: #fff;
+  border: 1px solid #e8ece4;
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+.admin-dashboard__hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.admin-dashboard__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #6a7d64;
+}
+
+.admin-dashboard__cta {
+  display: inline-flex;
+  padding: 0.9rem 1.2rem;
+  border-radius: 999px;
+  background: #d7e5cf;
+  color: #24311f;
+  text-decoration: none;
+}
+
+.admin-dashboard__grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.panel__form {
+  display: grid;
+  gap: 1rem;
+}
+
+.panel__form label,
+.review-note {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.panel__form input,
+.review-note textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #d8dfd2;
+  border-radius: 14px;
+  font: inherit;
+}
+
+.panel__form button,
+.review-actions button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.85rem 1rem;
+  background: #cadbbc;
+  color: #1f2b1c;
+  cursor: pointer;
+}
+
+.panel__hint {
+  color: #61725c;
+}
+
+.panel__error {
+  color: #983c36;
+}
+
+.panel--full {
+  padding-bottom: 2rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid #edf1e9;
+}
+
+.review-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1rem;
+}
+
+.review-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.review-list button {
+  text-align: left;
+  border: 1px solid #e1e9da;
+  background: #f8faf6;
+  border-radius: 16px;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.review-list button.active {
+  border-color: #96b082;
+  background: #eef5e9;
+}
+
+.review-list button span {
+  display: block;
+  margin-top: 0.35rem;
+  color: #60715a;
+}
+
+.review-detail pre {
+  white-space: pre-wrap;
+  background: #f5f7f3;
+  padding: 1rem;
+  border-radius: 16px;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.review-detail__meta {
+  color: #60715a;
+}
+
+.review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 960px) {
+  .admin-dashboard__grid,
+  .review-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard__hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

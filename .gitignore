@@ -28,6 +28,10 @@
 turkisheco-frontend/node_modules/
 turkisheco-frontend/dist/
 turkisheco-frontend/.angular/
+.env
+.env.*
+backend/Turkisheco.Api/appsettings.Local.json
+backend/Turkisheco.Api/appsettings.*.local.json
 
 # Çeşitli
 *.DS_Store

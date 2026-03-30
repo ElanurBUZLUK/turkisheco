@@ -45,7 +45,9 @@ export class AccountLoginComponent {
       .subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.router.navigateByUrl('/');
+          this.router.navigateByUrl(
+            this.auth.isSuperAdmin() ? '/admin/posts' : '/'
+          );
         },
         error: (err) => {
           console.error(err);

@@ -1,26 +1,30 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, tap } from 'rxjs';
-
-const API_BASE = 'http://localhost:5080/api';
+import { environment } from '../../environments/environment';
 
 export interface AuthResponse {
   token: string;
   forumUserId: number;
   userName: string;
   displayName: string;
+  role: string;
 }
 
 export interface LoggedInUser {
   forumUserId: number;
   userName: string;
   displayName: string;
+  role: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly TOKEN_KEY = 'turkisheco_token';
   private readonly USER_KEY = 'turkisheco_user';
+  private readonly apiBaseUrl = environment.apiBaseUrl;
+  private readonly platformId = inject(PLATFORM_ID);
 
   private currentUserSubject = new BehaviorSubject<LoggedInUser | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
@@ -31,7 +35,7 @@ export class AuthService {
 
   private hydrateFromStorage() {
     const token = this.getToken();
-    const storedUser = localStorage.getItem(this.USER_KEY);
+    const storedUser = this.getStorageItem(this.USER_KEY);
 
     if (!token) {
       this.currentUserSubject.next(null);
@@ -51,33 +55,41 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.getStorageItem(this.TOKEN_KEY);
+  }
+
+  getCurrentUser(): LoggedInUser | null {
+    return this.currentUserSubject.value;
   }
 
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
 
+  isSuperAdmin(): boolean {
+    return this.currentUserSubject.value?.role === 'super_admin';
+  }
+
   register(payload: { userName: string; email: string; password: string; displayName?: string }) {
     return this.http
-      .post<AuthResponse>(`${API_BASE}/auth/register`, payload)
+      .post<AuthResponse>(`${this.apiBaseUrl}/auth/register`, payload)
       .pipe(tap((res) => this.persistAuth(res)));
   }
 
   login(payload: { userNameOrEmail: string; password: string }) {
     return this.http
-      .post<AuthResponse>(`${API_BASE}/auth/login`, payload)
+      .post<AuthResponse>(`${this.apiBaseUrl}/auth/login`, payload)
       .pipe(tap((res) => this.persistAuth(res)));
   }
 
   logout() {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
+    this.removeStorageItem(this.TOKEN_KEY);
+    this.removeStorageItem(this.USER_KEY);
     this.currentUserSubject.next(null);
   }
 
   private persistAuth(res: AuthResponse) {
-    if (!res?.token) return;
+    if (!res?.token || !isPlatformBrowser(this.platformId)) return;
 
     localStorage.setItem(this.TOKEN_KEY, res.token);
 
@@ -85,9 +97,26 @@ export class AuthService {
       forumUserId: res.forumUserId,
       userName: res.userName,
       displayName: res.displayName,
+      role: res.role,
     };
 
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
     this.currentUserSubject.next(user);
+  }
+
+  private getStorageItem(key: string): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    return localStorage.getItem(key);
+  }
+
+  private removeStorageItem(key: string): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    localStorage.removeItem(key);
   }
 }
