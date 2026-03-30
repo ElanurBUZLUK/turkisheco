@@ -1,22 +1,12 @@
-<ng-container *ngIf="isAuthenticatedAdmin; else adminLoginState">
-  <app-admin-dashboard />
-</ng-container>
+<section class="admin-entry-shell">
+  <div class="admin-entry-shell__intro">
+    <p class="admin-entry-shell__eyebrow">Super Admin Portal</p>
+    <h1>/ww/{{ requestedUserName }}</h1>
+    <p>
+      Bu adres yalnızca super admin giriş kapısıdır. Giriş yaptıktan sonra yeni yazar
+      oluşturma, yeni yazı başlatma ve onay bekleyen içerik yönetimi için admin paneline geçersin.
+    </p>
+  </div>
 
-<ng-template #adminLoginState>
-  <section class="admin-entry-shell">
-    <div class="admin-entry-shell__intro">
-      <p class="admin-entry-shell__eyebrow">Super Admin Portal</p>
-      <h1>/ww/{{ requestedUserName }}</h1>
-      <p>
-        Burası ana admin giriş adresi. Giriş yaptıktan sonra yeni yazar oluşturma,
-        yazı yazma ve onay bekleyen içerikleri aynı adres üzerinden yöneteceksin.
-      </p>
-    </div>
-
-    <div class="admin-entry-shell__loading" *ngIf="isBootstrappingAdmin">
-      Admin paneli hazırlanıyor...
-    </div>
-
-    <app-account-login *ngIf="!isBootstrappingAdmin && bootstrapFailed" />
-  </section>
-</ng-template>
+  <app-account-login />
+</section>

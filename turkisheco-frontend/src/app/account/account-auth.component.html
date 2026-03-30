@@ -22,7 +22,7 @@
       </div>
       <div class="feature-item">
         <div class="feature-icon">✓</div>
-        <span>Premium içeriklere özel erişim</span>
+        <span>Topluluk ve profil araçları</span>
       </div>
     </div>
   </div>
@@ -92,7 +92,7 @@
           required
         />
         <label for="terms">
-          <a href="#">Kullanım Koşulları</a> ve <a href="#">Gizlilik Politikası</a>'nı kabul
+          <a routerLink="/terms">Kullanım Koşulları</a> ve <a routerLink="/privacy">Gizlilik Politikası</a>'nı kabul
           ediyorum
         </label>
       </div>
@@ -103,18 +103,5 @@
 
       <p *ngIf="error" class="error">{{ error }}</p>
     </form>
-
-    <div class="divider">veya</div>
-
-    <div class="social-buttons">
-      <button type="button" class="social-btn">
-        <span class="social-icon google"></span>
-        Google
-      </button>
-      <button type="button" class="social-btn">
-        <span class="social-icon facebook"></span>
-        Facebook
-      </button>
-    </div>
   </div>
 </div>

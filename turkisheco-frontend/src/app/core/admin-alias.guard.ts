@@ -5,20 +5,15 @@ import { AuthService } from '../services/auth.service';
 export const adminAliasGuard: CanActivateFn = (route) => {
   const auth = inject(AuthService);
   const router = inject(Router);
+  const requestedUserName = route.paramMap.get('username') ?? auth.getCurrentUser()?.userName ?? 'Ela';
 
   if (!auth.isSuperAdmin()) {
-    return router.createUrlTree(['/admin/login']);
+    return router.createUrlTree(['/ww', requestedUserName]);
   }
 
-  const requestedUserName = route.paramMap.get('username');
   const currentUser = auth.getCurrentUser();
-
-  if (!requestedUserName || !currentUser) {
-    return router.createUrlTree(['/admin/login']);
-  }
-
   if (requestedUserName.toLowerCase() !== currentUser.userName.toLowerCase()) {
-    return router.createUrlTree([auth.getAdminRoute()]);
+    return router.createUrlTree(['/ww', currentUser.userName, 'posts']);
   }
 
   return true;

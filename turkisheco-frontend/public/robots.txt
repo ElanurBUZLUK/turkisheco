@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /ww/
+Disallow: /w/
+
+Sitemap: https://turkisheco.com/sitemap.xml

@@ -50,7 +50,7 @@ export class AccountLoginComponent {
         next: () => {
           this.isSubmitting = false;
           this.router.navigateByUrl(
-            this.auth.isSuperAdmin() ? this.auth.getAdminRoute() : '/'
+            this.auth.isSuperAdmin() ? this.auth.getAdminDashboardRoute() : '/'
           );
         },
         error: (err) => {

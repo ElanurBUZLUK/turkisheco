@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#edf4e7"/>
+      <stop offset="100%" stop-color="#d8e6d0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="925" cy="170" r="120" fill="#24422d" opacity="0.12"/>
+  <circle cx="220" cy="500" r="160" fill="#24422d" opacity="0.08"/>
+  <text x="110" y="245" fill="#24422d" font-family="Georgia, serif" font-size="76" font-weight="700">
+    TurkishEco
+  </text>
+  <text x="110" y="325" fill="#42624d" font-family="Arial, sans-serif" font-size="34">
+    Sürdürülebilirlik, topluluk ve editoryal içerik
+  </text>
+  <text x="110" y="382" fill="#42624d" font-family="Arial, sans-serif" font-size="34">
+    tek bir Türkçe yayın alanında buluşuyor.
+  </text>
+</svg>

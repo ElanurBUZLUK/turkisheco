@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Turkisheco.Api.Services;
+using Turkisheco.Api.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +78,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+await EnsureBootstrapAdminAsync(app);
+
 app.Run();
 
 static string GetRequiredConfig(IConfiguration configuration, string key, string envVarName)
@@ -137,4 +140,57 @@ static string[] GetAllowedOrigins(IConfiguration configuration, IWebHostEnvironm
 
     throw new InvalidOperationException(
         "Production CORS origins are not configured. Set 'Cors__AllowedOrigins__0' (and additional indexes as needed) or use 'Cors__AllowedOrigins' as a comma-separated list.");
+}
+
+static async Task EnsureBootstrapAdminAsync(WebApplication app)
+{
+    var bootstrapSection = app.Configuration.GetSection("BootstrapAdmin");
+    var userName = bootstrapSection["UserName"]?.Trim();
+    var email = bootstrapSection["Email"]?.Trim();
+    var password = bootstrapSection["Password"];
+    var displayName = bootstrapSection["DisplayName"]?.Trim();
+
+    if (string.IsNullOrWhiteSpace(userName) &&
+        string.IsNullOrWhiteSpace(email) &&
+        string.IsNullOrWhiteSpace(password))
+    {
+        return;
+    }
+
+    if (string.IsNullOrWhiteSpace(userName) ||
+        string.IsNullOrWhiteSpace(email) ||
+        string.IsNullOrWhiteSpace(password))
+    {
+        throw new InvalidOperationException(
+            "Bootstrap admin configuration is incomplete. Set BootstrapAdmin__UserName, BootstrapAdmin__Email and BootstrapAdmin__Password together.");
+    }
+
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if (await db.ForumUsers.AnyAsync(user => user.Role == "super_admin"))
+    {
+        app.Logger.LogInformation("Bootstrap admin skipped because a super_admin user already exists.");
+        return;
+    }
+
+    if (await db.ForumUsers.AnyAsync(user => user.UserName == userName || user.Email == email))
+    {
+        throw new InvalidOperationException(
+            "Bootstrap admin could not be created because the configured username or email is already in use.");
+    }
+
+    var admin = new ForumUser
+    {
+        UserName = userName,
+        Email = email,
+        DisplayName = string.IsNullOrWhiteSpace(displayName) ? userName : displayName,
+        PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+        Role = "super_admin"
+    };
+
+    db.ForumUsers.Add(admin);
+    await db.SaveChangesAsync();
+
+    app.Logger.LogInformation("Bootstrap super_admin user '{UserName}' created via configuration.", userName);
 }

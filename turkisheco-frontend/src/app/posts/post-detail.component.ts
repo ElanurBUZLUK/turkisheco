@@ -7,6 +7,7 @@ import { CommentService } from '../services/comment.service';
 import { Post } from '../models/post';
 import { Comment } from '../models/comment';
 import { AuthService } from '../services/auth.service';
+import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-post-detail',
@@ -21,6 +22,7 @@ export class PostDetailComponent {
   private commentService = inject(CommentService);
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
+  private seo = inject(SeoService);
 
   post?: Post;
   comments: Comment[] = [];
@@ -65,6 +67,12 @@ export class PostDetailComponent {
       next: (post) => {
         this.post = post;
         this.isLoadingPost = false;
+        this.seo.update({
+          title: `${post.title} | TurkishEco`,
+          description: (post.summary || post.contentMarkdown || '').slice(0, 155),
+          canonicalPath: `/posts/${post.slug}`,
+          type: 'article',
+        });
 
         this.loadComments(post.id);
         this.loadRecommended(post.id);
@@ -73,6 +81,12 @@ export class PostDetailComponent {
         this.loadError = 'Yazı yüklenirken bir sorun oluştu.';
         this.isLoadingPost = false;
         this.isLoadingComments = false;
+        this.seo.update({
+          title: 'Yazı Bulunamadı | TurkishEco',
+          description: 'İstenen yazı bulunamadı veya yayında değil.',
+          canonicalPath: '/404',
+          robots: 'noindex, nofollow',
+        });
       },
     });
   }

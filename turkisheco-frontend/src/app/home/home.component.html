@@ -2,13 +2,6 @@
 <div class="state state-error" *ngIf="error">{{ error }}</div>
 
 <main *ngIf="!isLoading && !error">
-  <section class="state" style="margin-bottom: 1.5rem;">
-    <strong>Yönetici erişimi:</strong>
-    <a [routerLink]="adminEntryRoute">
-      {{ auth.isSuperAdmin() ? 'Admin paneline git' : 'Yönetici paneline giriş yap' }}
-    </a>
-  </section>
-
   <div class="featured-grid" *ngIf="posts.length > 0; else noPosts">
     <a
       class="card card-large"
@@ -50,7 +43,6 @@
 
   <div class="section-header" *ngIf="posts.length > 3">
     <h3>Recent Blog Posts</h3>
-    <button class="view-all-btn" routerLink="/admin/posts">Tüm Yazılar</button>
   </div>
 
   <div class="blog-grid" *ngIf="posts.length > 3">

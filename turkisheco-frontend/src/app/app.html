@@ -21,7 +21,7 @@
         Topluluk
       </a>
       <ng-container *ngIf="auth.currentUser$ | async as user; else guestLinks">
-        <a *ngIf="auth.isSuperAdmin()" [routerLink]="adminEntryRoute" routerLinkActive="active">
+        <a *ngIf="auth.isSuperAdmin()" [routerLink]="adminDashboardRoute" routerLinkActive="active">
           Admin Paneli
         </a>
         <a *ngIf="auth.isSuperAdmin()" routerLink="/posts/new" routerLinkActive="active">
@@ -40,9 +40,6 @@
           <button class="link-button" type="button" (click)="logout()">Çıkış</button>
         </ng-container>
         <ng-template #publicGuestLinks>
-          <a [routerLink]="adminEntryRoute" routerLinkActive="active">
-            Yönetici Paneli
-          </a>
           <a routerLink="/account/login" routerLinkActive="active">
             Giriş Yap
           </a>
@@ -52,17 +49,34 @@
         </ng-template>
       </ng-template>
     </nav>
-
-    <div class="search-container">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
-        <circle cx="11" cy="11" r="8"></circle>
-        <path d="m21 21-4.35-4.35"></path>
-      </svg>
-      <input type="text" placeholder="Type topics...">
-    </div>
   </div>
 </header>
 
 <main class="app-main">
   <router-outlet></router-outlet>
 </main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__brand">
+      <strong>TurkishEco</strong>
+      <p>Sürdürülebilirlik, ekonomi ve topluluk odaklı Türkçe yayın platformu.</p>
+    </div>
+
+    <nav class="site-footer__links" aria-label="Footer">
+      <a routerLink="/about">Hakkımızda</a>
+      <a routerLink="/contact">İletişim</a>
+      <a routerLink="/privacy">Gizlilik</a>
+      <a routerLink="/terms">Koşullar</a>
+      <a routerLink="/cookies">Çerezler</a>
+      <a routerLink="/kvkk">KVKK</a>
+    </nav>
+
+    <div class="site-footer__meta">
+      <a href="mailto:hello@turkisheco.com">hello@turkisheco.com</a>
+      <a href="https://www.instagram.com" rel="noopener noreferrer" target="_blank">Instagram</a>
+      <a href="https://www.linkedin.com" rel="noopener noreferrer" target="_blank">LinkedIn</a>
+      <span>Maslak, İstanbul, Türkiye</span>
+    </div>
+  </div>
+</footer>

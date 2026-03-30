@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
   apiBaseUrl: 'https://api.turkisheco.com/api',
-  adminAutoLogin: null,
+  siteUrl: 'https://turkisheco.com',
+  defaultOgImageUrl: 'https://turkisheco.com/og-default.svg',
 };

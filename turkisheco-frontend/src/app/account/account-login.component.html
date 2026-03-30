@@ -17,16 +17,16 @@
 
       <div class="stats">
         <div class="stat-item">
-          <div class="stat-number">10K+</div>
-          <div class="stat-label">Makale</div>
+          <div class="stat-number">Analiz</div>
+          <div class="stat-label">Gündem ve ekonomi yazılarına hızlı erişim</div>
         </div>
         <div class="stat-item">
-          <div class="stat-number">500+</div>
-          <div class="stat-label">Podcast</div>
+          <div class="stat-number">Topluluk</div>
+          <div class="stat-label">Forum başlıkları ve editoryal tartışmalar</div>
         </div>
         <div class="stat-item">
-          <div class="stat-number">50K+</div>
-          <div class="stat-label">Üye</div>
+          <div class="stat-number">Profil</div>
+          <div class="stat-label">Kayıtlı kullanıcılar için kişisel akış ve profil</div>
         </div>
       </div>
     </div>
@@ -47,13 +47,14 @@
 
     <form (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="email">E-posta veya Kullanıcı Adı</label>
+        <label for="identifier">E-posta veya Kullanıcı Adı</label>
         <input
-          type="email"
-          id="email"
+          type="text"
+          id="identifier"
           name="userNameOrEmail"
           placeholder="ornek@email.com veya kullanıcı adınız"
           [(ngModel)]="form.userNameOrEmail"
+          autocomplete="username"
           required
         />
       </div>
@@ -80,7 +81,6 @@
           />
           <label for="remember">Beni Hatırla</label>
         </div>
-        <a href="#" class="forgot-password">Şifremi Unuttum?</a>
       </div>
 
       <button type="submit" class="submit-btn" [disabled]="isSubmitting">
@@ -91,21 +91,8 @@
     </form>
 
     <div class="admin-entry-note" *ngIf="isAdminEntry">
-      Panel adresi: <strong>/admin/posts</strong><br />
-      Giriş yoksa sistem sizi otomatik olarak bu ekrana yönlendirir.
-    </div>
-
-    <div class="divider" *ngIf="!isAdminEntry">veya</div>
-
-    <div class="social-buttons" *ngIf="!isAdminEntry">
-      <button type="button" class="social-btn">
-        <span class="social-icon google"></span>
-        Google
-      </button>
-      <button type="button" class="social-btn">
-        <span class="social-icon facebook"></span>
-        Facebook
-      </button>
+      Yönetici giriş adresi: <strong>/ww/Ela</strong><br />
+      Dashboard yalnızca doğrulanmış super admin oturumuyla <strong>/ww/Ela/posts</strong> altında açılır.
     </div>
   </div>
 </div>

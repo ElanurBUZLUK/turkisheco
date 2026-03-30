@@ -34,21 +34,22 @@ namespace Turkisheco.Api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
         {
-            if (await _db.ForumUsers.AnyAsync(u => u.UserName == request.UserName || u.Email == request.Email))
+            var normalizedUserName = request.UserName.Trim();
+            var normalizedEmail = request.Email.Trim();
+
+            if (await _db.ForumUsers.AnyAsync(u => u.UserName == normalizedUserName || u.Email == normalizedEmail))
             {
                 return BadRequest("Kullanıcı adı veya e-posta zaten kullanılıyor.");
             }
 
-            var hasAdmin = await _db.ForumUsers.AnyAsync(u => u.Role == "super_admin");
-
             var user = new ForumUser
             {
-                UserName = request.UserName.Trim(),
-                Email = request.Email.Trim(),
+                UserName = normalizedUserName,
+                Email = normalizedEmail,
                 DisplayName = string.IsNullOrWhiteSpace(request.DisplayName)
-                    ? request.UserName.Trim()
+                    ? normalizedUserName
                     : request.DisplayName.Trim(),
-                Role = hasAdmin ? "member" : "super_admin"
+                Role = "member"
             };
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

@@ -75,6 +75,10 @@ export class AuthService {
     return `/ww/${adminUserName}`;
   }
 
+  getAdminDashboardRoute(): string {
+    return `${this.getAdminRoute()}/posts`;
+  }
+
   register(payload: { userName: string; email: string; password: string; displayName?: string }) {
     return this.http
       .post<AuthResponse>(`${this.apiBaseUrl}/auth/register`, payload)

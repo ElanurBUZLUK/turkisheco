@@ -1,8 +1,6 @@
 export const environment = {
   production: false,
   apiBaseUrl: 'http://localhost:5080/api',
-  adminAutoLogin: {
-    userNameOrEmail: 'Ela',
-    password: 'ElaBuz19.',
-  },
+  siteUrl: 'http://localhost:4200',
+  defaultOgImageUrl: 'http://localhost:4200/og-default.svg',
 };
