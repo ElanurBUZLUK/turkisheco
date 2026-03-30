@@ -1,0 +1,1 @@
+/usr/lib/postgresql/16/bin/postgres "-D" "/home/ela/Masaüstü/turkisheco1/.local/postgres-dev" "-k" "/home/ela/Masaüstü/turkisheco1/.local/postgres-dev" "-p" "55433"

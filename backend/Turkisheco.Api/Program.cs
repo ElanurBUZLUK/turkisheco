@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Turkisheco.Api.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.RateLimiting;
 using Turkisheco.Api.Services;
 using Turkisheco.Api.Entities;
 
@@ -18,6 +21,7 @@ var allowedOrigins = GetAllowedOrigins(builder.Configuration, builder.Environmen
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddProblemDetails();
 
 // 2) CORS
 builder.Services.AddCors(options =>
@@ -39,6 +43,57 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<WriterCodeHasher>();
 builder.Services.AddScoped<WriterMailService>();
 builder.Services.AddScoped<WriterTokenService>();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.ContentType = "application/json";
+        await context.HttpContext.Response.WriteAsync(
+            "{\"message\":\"Çok fazla istek gönderildi. Lütfen biraz bekleyip tekrar deneyin.\"}",
+            token);
+    };
+
+    options.AddPolicy("auth-login", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: GetClientIp(httpContext),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(10),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+
+    options.AddPolicy("auth-register", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: GetClientIp(httpContext),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromMinutes(15),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+
+    options.AddPolicy("comment-submit", httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: GetClientIp(httpContext),
+            factory: _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 6,
+                Window = TimeSpan.FromMinutes(10),
+                SegmentsPerWindow = 5,
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+});
 
 builder.Services.AddAuthentication(options =>
 {
@@ -69,10 +124,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection(); // gerekirse açılabilir
+app.UseForwardedHeaders();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
 
 // 3) CORS middleware MapControllers'tan ÖNCE olmalı
 app.UseCors("AllowFrontend");
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -193,4 +256,9 @@ static async Task EnsureBootstrapAdminAsync(WebApplication app)
     await db.SaveChangesAsync();
 
     app.Logger.LogInformation("Bootstrap super_admin user '{UserName}' created via configuration.", userName);
+}
+
+static string GetClientIp(HttpContext httpContext)
+{
+    return httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 }

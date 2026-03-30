@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Turkisheco.Api.Data;
@@ -28,7 +29,7 @@ namespace Turkisheco.Api.Controllers
         {
             var comments = await _db.Comments
                 .Include(c => c.ForumUser)
-                .Where(c => c.PostId == postId)
+                .Where(c => c.PostId == postId && !c.IsPendingModeration)
                 .OrderByDescending(c => c.CreatedAt)
                 .Select(c => new CommentDto
                 {
@@ -39,7 +40,8 @@ namespace Turkisheco.Api.Controllers
                         : (c.AuthorName ?? "Misafir"),
                     AuthorEmail = c.AuthorEmail,
                     Content = c.Content,
-                    CreatedAt = c.CreatedAt
+                    CreatedAt = c.CreatedAt,
+                    IsPendingModeration = c.IsPendingModeration
                 })
                 .ToListAsync();
 
@@ -48,11 +50,15 @@ namespace Turkisheco.Api.Controllers
 
         [HttpPost]
         [HttpPost("/api/comments/post/{postId:int}")]
+        [EnableRateLimiting("comment-submit")]
         public async Task<ActionResult<CommentDto>> Create(int postId, [FromBody] CreateCommentDto dto)
         {
             var postExists = await _db.Posts.AnyAsync(p => p.Id == postId);
             if (!postExists)
                 return NotFound("Post bulunamadı.");
+
+            if (!string.IsNullOrWhiteSpace(dto.Website))
+                return BadRequest("Spam tespit edildi.");
 
             if (string.IsNullOrWhiteSpace(dto.Content))
                 return BadRequest("Yorum metni boş olamaz.");
@@ -61,7 +67,8 @@ namespace Turkisheco.Api.Controllers
             {
                 PostId = postId,
                 Content = dto.Content.Trim(),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                IsPendingModeration = false
             };
 
             if (User.Identity?.IsAuthenticated == true)
@@ -80,6 +87,7 @@ namespace Turkisheco.Api.Controllers
 
                 comment.AuthorName = authorName;
                 comment.AuthorEmail = dto.AuthorEmail?.Trim();
+                comment.IsPendingModeration = true;
             }
 
             _db.Comments.Add(comment);
@@ -103,7 +111,8 @@ namespace Turkisheco.Api.Controllers
                 AuthorName = authorDisplayName,
                 AuthorEmail = comment.AuthorEmail,
                 Content = comment.Content,
-                CreatedAt = comment.CreatedAt
+                CreatedAt = comment.CreatedAt,
+                IsPendingModeration = comment.IsPendingModeration
             };
 
             return CreatedAtAction(nameof(GetForPost), new { postId }, result);

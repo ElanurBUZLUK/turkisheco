@@ -3,4 +3,6 @@ export const environment = {
   apiBaseUrl: 'http://localhost:5080/api',
   siteUrl: 'http://localhost:4200',
   defaultOgImageUrl: 'http://localhost:4200/og-default.svg',
+  analyticsMeasurementId: null as string | null,
+  searchConsoleVerificationToken: null as string | null,
 };

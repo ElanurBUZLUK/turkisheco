@@ -12,6 +12,10 @@ export const adminAliasGuard: CanActivateFn = (route) => {
   }
 
   const currentUser = auth.getCurrentUser();
+  if (!currentUser) {
+    return router.createUrlTree(['/ww', requestedUserName]);
+  }
+
   if (requestedUserName.toLowerCase() !== currentUser.userName.toLowerCase()) {
     return router.createUrlTree(['/ww', currentUser.userName, 'posts']);
   }

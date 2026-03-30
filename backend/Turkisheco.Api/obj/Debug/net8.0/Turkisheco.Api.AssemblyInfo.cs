@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Turkisheco.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+156d3bb73d2cc503c3019020b3d1922068e9ac97")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b2f28f3d3d72c75aa7e632de7f524b85cc273d9d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Turkisheco.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Turkisheco.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

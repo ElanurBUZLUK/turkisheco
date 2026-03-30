@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
+import { AnalyticsService } from '../services/analytics.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -21,7 +22,11 @@ export class AccountLoginComponent {
   isSubmitting = false;
   error: string | null = null;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private analytics: AnalyticsService
+  ) {}
 
   get isAdminEntry(): boolean {
     return this.router.url.startsWith('/admin') || this.router.url.startsWith('/ww');
@@ -49,8 +54,12 @@ export class AccountLoginComponent {
       .subscribe({
         next: () => {
           this.isSubmitting = false;
+          this.analytics.trackEvent('login', {
+            area: this.isAdminEntry ? 'admin' : 'public',
+            role: this.auth.getCurrentUser()?.role ?? 'unknown',
+          });
           this.router.navigateByUrl(
-            this.auth.isSuperAdmin() ? this.auth.getAdminDashboardRoute() : '/'
+            this.auth.isSuperAdmin() ? this.auth.getAdminRoute() : '/'
           );
         },
         error: (err) => {

@@ -21,6 +21,8 @@ namespace Turkisheco.Api.Entities
         [MaxLength(2000)]
         public string Content { get; set; } = string.Empty;
 
+        public bool IsPendingModeration { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

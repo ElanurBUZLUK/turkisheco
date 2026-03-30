@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,6 +33,7 @@ namespace Turkisheco.Api.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
+        [EnableRateLimiting("auth-register")]
         public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
         {
             var normalizedUserName = request.UserName.Trim();
@@ -64,6 +66,7 @@ namespace Turkisheco.Api.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
+        [EnableRateLimiting("auth-login")]
         public async Task<ActionResult<AuthResponse>> Login(LoginRequest request)
         {
             var identifier = request.UserNameOrEmail.Trim();

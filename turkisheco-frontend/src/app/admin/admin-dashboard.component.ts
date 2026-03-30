@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminService, AdminWriter } from '../services/admin.service';
+import { AnalyticsService } from '../services/analytics.service';
 import { PostService } from '../services/post.service';
 import { Post } from '../models/post';
 
@@ -17,6 +18,7 @@ import { Post } from '../models/post';
 export class AdminDashboardComponent {
   private readonly fb = inject(FormBuilder);
   private readonly adminService = inject(AdminService);
+  private readonly analytics = inject(AnalyticsService);
   private readonly postService = inject(PostService);
 
   readonly reservedUsernames = ['admin', 'about', 'contact', 'posts', 'forum', 'login', 'register', 'account', 'api', 'w'];
@@ -63,6 +65,9 @@ export class AdminDashboardComponent {
         this.writerForm.reset();
         this.writerForm.patchValue({ username: '', email: '' });
         this.isSavingWriter = false;
+        this.analytics.trackEvent('admin_writer_create', {
+          username: writer.username,
+        });
       },
       error: (err) => {
         this.writerError = err?.error || 'Yazar oluşturulamadı.';
@@ -80,7 +85,13 @@ export class AdminDashboardComponent {
     if (!this.selectedPost) return;
 
     this.postService.approve(this.selectedPost.id, this.reviewNote).subscribe({
-      next: (post) => this.updatePost(post),
+      next: (post) => {
+        this.analytics.trackEvent('admin_post_approve', {
+          post_id: post.id,
+          post_slug: post.slug,
+        });
+        this.updatePost(post);
+      },
       error: () => this.queueError = 'Onay işlemi başarısız oldu.',
     });
   }
@@ -89,7 +100,13 @@ export class AdminDashboardComponent {
     if (!this.selectedPost) return;
 
     this.postService.reject(this.selectedPost.id, this.reviewNote).subscribe({
-      next: (post) => this.updatePost(post),
+      next: (post) => {
+        this.analytics.trackEvent('admin_post_reject', {
+          post_id: post.id,
+          post_slug: post.slug,
+        });
+        this.updatePost(post);
+      },
       error: () => this.queueError = 'Red işlemi başarısız oldu.',
     });
   }
@@ -98,7 +115,13 @@ export class AdminDashboardComponent {
     if (!this.selectedPost) return;
 
     this.postService.publish(this.selectedPost.id, this.reviewNote).subscribe({
-      next: (post) => this.updatePost(post),
+      next: (post) => {
+        this.analytics.trackEvent('admin_post_publish', {
+          post_id: post.id,
+          post_slug: post.slug,
+        });
+        this.updatePost(post);
+      },
       error: () => this.queueError = 'Yayınlama işlemi başarısız oldu.',
     });
   }

@@ -10,6 +10,7 @@ namespace Turkisheco.Api.Dto
         public string? AuthorEmail { get; set; }
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public bool IsPendingModeration { get; set; }
     }
 
     public class CreateCommentDto
@@ -17,5 +18,6 @@ namespace Turkisheco.Api.Dto
         public string AuthorName { get; set; } = string.Empty;
         public string? AuthorEmail { get; set; }
         public string Content { get; set; } = string.Empty;
+        public string? Website { get; set; }
     }
 }

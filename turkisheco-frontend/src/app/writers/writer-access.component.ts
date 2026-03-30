@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AnalyticsService } from '../services/analytics.service';
 import { WriterAuthService } from '../services/writer-auth.service';
 
 @Component({
@@ -16,6 +17,7 @@ export class WriterAccessComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly writerAuth = inject(WriterAuthService);
+  private readonly analytics = inject(AnalyticsService);
   private resendTimerId: ReturnType<typeof setInterval> | null = null;
 
   username = '';
@@ -62,6 +64,9 @@ export class WriterAccessComponent implements OnInit, OnDestroy {
         this.isSendingCode = false;
         this.info = 'Giriş kodu kayıtlı e-posta adresine gönderildi.';
         this.debugCode = response.debugCode ?? null;
+        this.analytics.trackEvent('writer_code_request', {
+          username: this.username,
+        });
         this.startResendCountdown(response.retryAfterSeconds);
       },
       error: (err) => {
@@ -85,6 +90,9 @@ export class WriterAccessComponent implements OnInit, OnDestroy {
     this.writerAuth.verifyCode(this.username, code).subscribe({
       next: () => {
         this.isVerifyingCode = false;
+        this.analytics.trackEvent('writer_login', {
+          username: this.username,
+        });
         this.router.navigate(['/posts/new']);
       },
       error: (err) => {

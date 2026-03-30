@@ -7,6 +7,7 @@ import { CommentService } from '../services/comment.service';
 import { Post } from '../models/post';
 import { Comment } from '../models/comment';
 import { AuthService } from '../services/auth.service';
+import { AnalyticsService } from '../services/analytics.service';
 import { SeoService } from '../services/seo.service';
 
 @Component({
@@ -22,6 +23,7 @@ export class PostDetailComponent {
   private commentService = inject(CommentService);
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
+  private analytics = inject(AnalyticsService);
   private seo = inject(SeoService);
 
   post?: Post;
@@ -32,12 +34,14 @@ export class PostDetailComponent {
   isLoadingComments = true;
   isSubmitting = false;
   loadError: string | null = null;
+  commentFeedback: string | null = null;
   isLoggedIn = false;
 
   commentForm: FormGroup = this.fb.group({
     authorName: ['', [Validators.required, Validators.maxLength(80)]],
     authorEmail: ['', [Validators.email]],
     content: ['', [Validators.required, Validators.maxLength(1000)]],
+    website: [''],
   });
 
   ngOnInit(): void {
@@ -130,16 +134,39 @@ export class PostDetailComponent {
     }
 
     this.isSubmitting = true;
+    this.commentFeedback = null;
 
     this.commentService
       .addComment(this.post.id, this.commentForm.value)
       .subscribe({
         next: (created) => {
-          this.comments = [created, ...this.comments];
-          this.commentForm.reset();
+          this.analytics.trackEvent('comment_submit', {
+            authenticated: this.isLoggedIn,
+            moderated: created.isPendingModeration ?? false,
+            post_slug: this.post?.slug ?? 'unknown',
+          });
+
+          if (created.isPendingModeration) {
+            this.commentFeedback = 'Yorumunuz alındı ve moderasyon sonrası yayınlanacak.';
+          } else {
+            this.comments = [created, ...this.comments];
+            this.commentFeedback = 'Yorumunuz yayınlandı.';
+          }
+
+          this.commentForm.reset({
+            authorName: '',
+            authorEmail: '',
+            content: '',
+            website: '',
+          });
+          this.toggleNameValidator(this.isLoggedIn);
           this.isSubmitting = false;
         },
-        error: () => {
+        error: (error) => {
+          this.commentFeedback =
+            error?.status === 429
+              ? 'Çok sık yorum gönderiyorsunuz. Lütfen biraz bekleyin.'
+              : 'Yorum gönderilirken bir hata oluştu.';
           this.isSubmitting = false;
         },
       });

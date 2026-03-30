@@ -1,12 +1,18 @@
-<section class="admin-entry-shell">
-  <div class="admin-entry-shell__intro">
-    <p class="admin-entry-shell__eyebrow">Super Admin Portal</p>
-    <h1>/ww/{{ requestedUserName }}</h1>
-    <p>
-      Bu adres yalnızca super admin giriş kapısıdır. Giriş yaptıktan sonra yeni yazar
-      oluşturma, yeni yazı başlatma ve onay bekleyen içerik yönetimi için admin paneline geçersin.
-    </p>
-  </div>
+<ng-container *ngIf="isAuthenticatedAdmin; else adminLoginState">
+  <app-admin-dashboard />
+</ng-container>
 
-  <app-account-login />
-</section>
+<ng-template #adminLoginState>
+  <section class="admin-entry-shell">
+    <div class="admin-entry-shell__intro">
+      <p class="admin-entry-shell__eyebrow">Super Admin Portal</p>
+      <h1>/ww/{{ requestedUserName }}</h1>
+      <p>
+        Bu adres ana admin panelidir. Oturum yoksa aynı URL üzerinde super admin girişi açılır;
+        giriş yaptıktan sonra yeni yazar oluşturma, yeni yazı başlatma ve onay bekleyen içerik yönetimi burada görünür.
+      </p>
+    </div>
+
+    <app-account-login />
+  </section>
+</ng-template>

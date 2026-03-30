@@ -35,8 +35,7 @@
   <div class="login-right">
     <h2>{{ isAdminEntry ? 'Super Admin Girişi' : 'Giriş Yap' }}</h2>
     <p class="subtitle" *ngIf="isAdminEntry; else signupSubtitle">
-      İlk kurulumda henüz admin hesabı yoksa
-      <a routerLink="/account">ilk hesabı oluştur</a>.
+      Bu alan yalnızca önceden tanımlanmış super admin hesabı içindir.
     </p>
     <ng-template #signupSubtitle>
       <p class="subtitle">

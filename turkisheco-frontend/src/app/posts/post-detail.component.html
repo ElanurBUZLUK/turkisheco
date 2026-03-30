@@ -32,6 +32,14 @@
           placeholder="Yorumunuzu yazın..."
         ></textarea>
 
+        <div
+          aria-hidden="true"
+          style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;"
+        >
+          <label for="website">Website</label>
+          <input id="website" type="text" formControlName="website" tabindex="-1" autocomplete="off" />
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label>Ad</label>
@@ -56,6 +64,8 @@
             {{ isSubmitting ? 'Gönderiliyor...' : 'Yorum Gönder' }}
           </button>
         </div>
+
+        <p class="muted" *ngIf="commentFeedback">{{ commentFeedback }}</p>
       </form>
     </div>
 

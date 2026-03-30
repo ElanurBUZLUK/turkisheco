@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
+import { AnalyticsService } from '../services/analytics.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -23,7 +24,11 @@ export class AccountAuthComponent {
   isSubmitting = false;
   error: string | null = null;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private analytics: AnalyticsService
+  ) {}
 
   onSubmit(): void {
     if (!this.form.acceptTerms) {
@@ -59,6 +64,9 @@ export class AccountAuthComponent {
       .subscribe({
         next: () => {
           this.isSubmitting = false;
+          this.analytics.trackEvent('sign_up', {
+            method: 'password',
+          });
           this.router.navigateByUrl('/');
         },
         error: (err) => {

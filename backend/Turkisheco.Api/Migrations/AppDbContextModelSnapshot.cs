@@ -49,6 +49,9 @@ namespace Turkisheco.Api.Migrations
                     b.Property<int?>("ForumUserId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsPendingModeration")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("PostId")
                         .HasColumnType("integer");
 
